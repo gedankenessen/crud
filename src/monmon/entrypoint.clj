@@ -8,24 +8,44 @@
             [clojure.pprint :as pp]
             [clojure.string :as str]
             [clojure.data.json :as json]
-            [monmon.logic :as logic])
-  (:gen-class))
+            [monmon.logic :as logic]
+            [ring.middleware.cors :refer [wrap-cors]]))
 
 (defroutes app-routes
-  ;;(GET "/:endpoint" [endpoint] (logic/get-data "" endpoint))
-  (GET "/pets"
-       []
+  ;; TODO: add abastraction layer
+  (GET "/:endpoint"
+       [endpoint]
        (fn [{headers :headers}]
          (let [user (get headers "authorization")]
            (if user
              ;; TODO: don't hardcode endpoint
-             (response (logic/get-data user "pets"))
-             ("User could not be found"))))))
+             (response (logic/get-data user endpoint))
+             ("User could not be found")))))
+  (POST "/:endpoint"
+        [endpoint]
+        (fn [{headers :headers body :body}]
+          (println body)
+          "Thank you for posting"
+          ;; (let [user (get headers "authorization")]
+          ;;   (if user
+          ;;     (logic/add-endpoint user endpoint body)
+          ;;     "User could not be found"))
+          )))
+
+(def entrypoint
+  (-> app-routes
+      ;; TODO: Parse body
+      wrap-cors
+      wrap-json-body
+      wrap-json-response
+      (wrap-defaults (assoc api-defaults :security  {:anti-forgery false}))))
 
 (defn start-server [port]
   ;; https://github.com/ring-clojure/ring-json
-  (server/run-server (wrap-defaults #'app-routes site-defaults) {:port port})
+  (server/run-server entrypoint {:port port})
+  ;;(wrap-json-params)
   (println (str "Running server at http:/127.0.0.1:" port)))
 
 (comment
   (start-server 3004))
+

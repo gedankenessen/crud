@@ -1,0 +1,15 @@
+# -*- restclient -*-
+
+# Get all data for endpoint /pets of user with id
+GET http://localhost:3004/pets
+Accept: application/json
+Authorization: 619806ebd901bc53b9783241
+
+# Post data to endpoint for /pets for user with id
+POST http://localhost:3004/pets
+Content-Type: application/json
+Authorization: 619806ebd901bc53b9783241
+{
+"name": "Louis",
+"hair": "soft"
+}

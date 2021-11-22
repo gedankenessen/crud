@@ -21,10 +21,15 @@
 
 (defn add-endpoint [user endpoint data]
   ;; TODO: differentiate in future because of versions!
-  (update-endpoint user endpoint data))
+  (p/update-endpoint user endpoint data))
 
 (defn endpoint-changed? [user endpoint data])
 
 (defn update-endpoint [user endpoint data]
   (p/update-endpoint user endpoint data))
 
+
+(comment
+  (get-data "619806ebd901bc53b9783241" "pets");; =>
+
+  )
