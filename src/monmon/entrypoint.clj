@@ -36,16 +36,21 @@
   (-> app-routes
       ;; TODO: Parse body
       wrap-cors
+      ;;(wrap-json-params)
       wrap-json-body
       wrap-json-response
-      (wrap-defaults (assoc api-defaults :security  {:anti-forgery false}))))
+      (wrap-defaults (assoc api-defaults :security {:anti-forgery false}))))
 
 (defn start-server [port]
   ;; https://github.com/ring-clojure/ring-json
-  (server/run-server entrypoint {:port port})
-  ;;(wrap-json-params)
-  (println (str "Running server at http:/127.0.0.1:" port)))
+  (println (str "Starting server at http:/127.0.0.1:" port "  ..."))
+  (server/run-server entrypoint {:port port :legacy-return-value? false}))
 
 (comment
-  (start-server 3004))
+  ;; Start server
+  (def server (atom (start-server 3004)))
+  ;; Inspect server objc
+  @server
+  ;; Stop server
+  (server/server-stop! @server))
 
