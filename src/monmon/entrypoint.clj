@@ -9,7 +9,8 @@
             [clojure.string :as str]
             [clojure.data.json :as json]
             [monmon.logic :as logic]
-            [ring.middleware.cors :refer [wrap-cors]]))
+            [ring.middleware.cors :refer [wrap-cors]]
+            [clojure.walk :as walk]))
 
 (defroutes app-routes
   ;; TODO: add abastraction layer
@@ -18,26 +19,23 @@
        (fn [{headers :headers}]
          (let [user (get headers "authorization")]
            (if user
-             ;; TODO: don't hardcode endpoint
              (response (logic/get-data user endpoint))
-             ("User could not be found")))))
+             "Invalid token"))))
   (POST "/:endpoint"
         [endpoint]
         (fn [{headers :headers body :body}]
-          (println body)
-          "Thank you for posting"
-          ;; (let [user (get headers "authorization")]
-          ;;   (if user
-          ;;     (logic/add-endpoint user endpoint body)
-          ;;     "User could not be found"))
-          )))
+          (let [user (get headers "authorization")]
+            (if user
+              (logic/add-endpoint user endpoint body)
+              "Invalid token")))))
 
 (def entrypoint
   (-> app-routes
       ;; TODO: Parse body
       wrap-cors
-      ;;(wrap-json-params)
       wrap-json-body
+      ;; Only use keywords (performance?)
+      walk/keywordize-keys
       wrap-json-response
       (wrap-defaults (assoc api-defaults :security {:anti-forgery false}))))
 
@@ -53,4 +51,8 @@
   @server
   ;; Stop server
   (server/server-stop! @server))
+
+
+;; TODO:
+;; https://practical.li/clojure-webapps/projects/status-monitor-deps/debugging-requests.html
 

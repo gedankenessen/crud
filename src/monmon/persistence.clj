@@ -4,39 +4,6 @@
             [monger.operators :refer :all])
   (:import org.bson.types.ObjectId [com.mongodb MongoOptions ServerAddress]))
 
-;; Refridgerator
-(comment
-  (defn has-endpoint [db id]
-    (mc/find-maps db "endpoints" {:_id id}))
-
-  (defn make-version
-    ([methods data]
-     (make-version (System/currentTimeMillis) methods data))
-    ([timestamp methods data]
-     {(keyword (str timestamp))
-      {:id (ObjectId.)
-       :methods methods
-       :data [data]}}))
-
-  (def all-methods ["get" "get-id" "post" "put" "delete"])
-
-  (defn create-endpoint [db user name methods data]
-    (mc/insert
-     db
-     "endpoints"
-     (let [timestamp (System/currentTimeMillis)]
-       {:keys []
-        :user user
-        :endpoints
-        {(keyword name)
-         {:created timestamp
-          :id (ObjectId.)
-          :versions
-          (make-version timestamp methods data)}}})))
-
-  (defn add-endpoint-version [db endpoint name methods data]
-    (mc/update-by-id db "endpoints" endpoint {(keyword (str name)) {$push {:versions (make-version methods data)} }})))
-
 (def conn (delay (mg/connect)))
 
 (defn get-endpoint [user endpoint]
@@ -50,8 +17,40 @@
      db
      "endpoints"
      {:user u}
-     {:user u :name endpoint :data data})))
+     {:user u :name endpoint :data [data]}))
+  "POST successful")
+
+(defn add-to-endpoint [user endpoint data]
+  (let [db (mg/get-db @conn "crud")
+        u (ObjectId. user)]
+    (mc/update
+     db
+     "endpoints"
+     {:user u :name endpoint}
+     {$push {:data data}}))
+  ;; TODO: Error handling+return id
+  "POST successful")
+
+(defn get-endpoint-by-id [id]
+  (let [db (mg/get-db @conn "crud")]
+    (mc/find-by-id
+     db
+     "endpoints"
+     (ObjectId. id))))
 
 (comment
-  (update-endpoint id "pets" {:name "Peter" :hair "hard"})
-  (get-data user-id "pets"))
+  (def res (atom {})))
+
+(comment
+  (let [user "619806ebd901bc53b9783241"
+        id "619808c6cb6430e108b481b6"
+        endpoint "pets"]
+    ;;(update-endpoint user endpoint {:name "Peter" :hair "hard"})
+    (get-endpoint user endpoint)
+    ;;(put-endpoint user endpoint {:name "lol" :hair "soft"})
+    ;;(get-endpoint-by-id id)
+    ))
+
+
+
+
