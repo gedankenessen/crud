@@ -38,8 +38,6 @@
       wrap-request-keywords
       wrap-cors
       wrap-json-body
-      ;; Only use keywords (performance?)
-      walk/keywordize-keys
       wrap-json-response
       ;; TODO: reject with no auth header
       (wrap-defaults (assoc api-defaults :security {:anti-forgery false}))))

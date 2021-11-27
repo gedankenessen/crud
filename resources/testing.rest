@@ -10,7 +10,6 @@ POST http://localhost:3004/pets
 Content-Type: application/json
 Authorization: 619806ebd901bc53b9783241
 {
-"name": "apple",
-"fruit?": false,
-"taste": "good"
+"color": "violet",
+"number": 4
 }
