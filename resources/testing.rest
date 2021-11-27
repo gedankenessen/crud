@@ -10,6 +10,6 @@ POST http://localhost:3004/pets
 Content-Type: application/json
 Authorization: 619806ebd901bc53b9783241
 {
-"name": "Louis",
-"hair": "soft"
+"color": "violet",
+"number": 4
 }

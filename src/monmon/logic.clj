@@ -1,8 +1,8 @@
 (ns monmon.logic
-  (:require [monmon.persistence :as p]))
+  (:require [monmon.persistence :as p])
+  (:import org.bson.types.ObjectId [com.mongodb MongoOptions ServerAddress]))
 
 ;; Which operations does the application have?
-
 ;; Get data in endpoint (GET)
 ;; Add endpoint (POST)
 ;; Check if endpoint changed
@@ -14,22 +14,19 @@
 ;; Delete data in endpoint by id (DELETE)
 
 (defn get-data [user endpoint]
-  (let [result (p/get-endpoint user endpoint)]
-    (if result
-      (:data result)
-      {})))
+  (if-let [result (p/get-endpoint user endpoint)]
+    (:data result)))
+
+(defn endpoint-changed? [user endpoint data]
+  (let [e (p/get-endpoint user endpoint)]
+    (or (nil? e) (not (= (keys (first (:data e))) (keys data))))))
 
 (defn add-endpoint [user endpoint data]
   ;; TODO: differentiate in future because of versions!
-  (p/update-endpoint user endpoint data))
-
-(defn endpoint-changed? [user endpoint data])
+  ;; TODO: Use id from endpoint from now on?
+  (if (endpoint-changed? user endpoint data)
+    (p/update-endpoint user endpoint data)
+    (p/add-to-endpoint user endpoint data)))
 
 (defn update-endpoint [user endpoint data]
-  (p/update-endpoint user endpoint data))
-
-
-(comment
-  (get-data "619806ebd901bc53b9783241" "pets");; =>
-
-  )
+  (p/update-endpoint user endpoint data)

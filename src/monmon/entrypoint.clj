@@ -9,48 +9,44 @@
             [clojure.string :as str]
             [clojure.data.json :as json]
             [monmon.logic :as logic]
-            [ring.middleware.cors :refer [wrap-cors]]))
+            [ring.middleware.cors :refer [wrap-cors]]
+            [clojure.walk :as walk]))
 
 (defroutes app-routes
-  ;; TODO: add abastraction layer
   (GET "/:endpoint"
        [endpoint]
        (fn [{headers :headers}]
-         (let [user (get headers "authorization")]
-           (if user
-             ;; TODO: don't hardcode endpoint
-             (response (logic/get-data user endpoint))
-             ("User could not be found")))))
+         (if-let [user (:authorization headers)]
+           (response (logic/get-data user endpoint))
+           "Invalid token")))
   (POST "/:endpoint"
         [endpoint]
         (fn [{headers :headers body :body}]
-          (println body)
-          "Thank you for posting"
-          ;; (let [user (get headers "authorization")]
-          ;;   (if user
-          ;;     (logic/add-endpoint user endpoint body)
-          ;;     "User could not be found"))
-          )))
+          (if-let [user (:authorization headers)]
+            (logic/add-endpoint user endpoint body)
+            "Invalid token"))))
+
+(defn wrap-request-keywords
+  ([handler]
+   (wrap-request-keywords handler {}))
+  ([handler _]
+   (fn [req]
+     (handler (walk/keywordize-keys req)))))
 
 (def entrypoint
   (-> app-routes
-      ;; TODO: Parse body
+      wrap-request-keywords
       wrap-cors
-      ;;(wrap-json-params)
       wrap-json-body
       wrap-json-response
+      ;; TODO: reject with no auth header
       (wrap-defaults (assoc api-defaults :security {:anti-forgery false}))))
 
 (defn start-server [port]
-  ;; https://github.com/ring-clojure/ring-json
   (println (str "Starting server at http:/127.0.0.1:" port "  ..."))
   (server/run-server entrypoint {:port port :legacy-return-value? false}))
 
 (comment
-  ;; Start server
   (def server (atom (start-server 3004)))
-  ;; Inspect server objc
   @server
-  ;; Stop server
   (server/server-stop! @server))
-
