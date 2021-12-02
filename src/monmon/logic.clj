@@ -13,20 +13,33 @@
 ;; Update data in endpoint by id (PUT)
 ;; Delete data in endpoint by id (DELETE)
 
-(defn get-data [user endpoint]
+(defn endpoint-changed?
+  [endpoint data]
+  (or (nil? endpoint) (not (= (keys (first (:data endpoint))) (keys data)))))
+
+(defn on-get [user endpoint]
   (if-let [result (p/get-endpoint user endpoint)]
     (:data result)))
 
-(defn endpoint-changed? [user endpoint data]
-  (let [e (p/get-endpoint user endpoint)]
-    (or (nil? e) (not (= (keys (first (:data e))) (keys data))))))
+(defn on-get-id [id data]
+  "not yet supported")
 
-(defn add-endpoint [user endpoint data]
+(defn on-add [user endpoint data]
   ;; TODO: differentiate in future because of versions!
-  ;; TODO: Use id from endpoint from now on?
-  (if (endpoint-changed? user endpoint data)
-    (p/update-endpoint user endpoint data)
-    (p/add-to-endpoint user endpoint data)))
+  (let [old (p/get-endpoint user endpoint)]
+    (cond
+      (nil? old)
+      (do (p/add-endpoint user endpoint data)
+          "Successfulyl added endpoint")
+      (endpoint-changed? old data)
+      (do (p/add-version user endpoint data)
+          "Successfully added version")
+      :else (do
+              (p/add-data user endpoint data)
+              "Successfully added data"))))
 
-(defn update-endpoint [user endpoint data]
-  (p/update-endpoint user endpoint data)
+(defn on-put [user endpoint data]
+  "not yet supported")
+
+(defn on-delete [user endpoint data]
+  "not yet supported")

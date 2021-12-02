@@ -1,15 +1,22 @@
 # -*- restclient -*-
 
 # Get all data for endpoint /pets of user with id
-GET http://localhost:3004/pets
+GET http://localhost:3004/tech
 Accept: application/json
 Authorization: 619806ebd901bc53b9783241
 
 # Post data to endpoint for /pets for user with id
-POST http://localhost:3004/pets
+POST http://localhost:3004/rings
 Content-Type: application/json
 Authorization: 619806ebd901bc53b9783241
 {
-"color": "violet",
-"number": 4
+"id": 3,
+"name": "Hold",
+"color": "#93c47d"
 }
+
+# Get all data for endpoint /pets of user with id
+GET http://localhost:3004/rings
+Accept: application/json
+Authorization: 619806ebd901bc53b9783241
+

@@ -17,13 +17,13 @@
        [endpoint]
        (fn [{headers :headers}]
          (if-let [user (:authorization headers)]
-           (response (logic/get-data user endpoint))
+           (response (logic/on-get user endpoint))
            "Invalid token")))
   (POST "/:endpoint"
         [endpoint]
         (fn [{headers :headers body :body}]
           (if-let [user (:authorization headers)]
-            (logic/add-endpoint user endpoint body)
+            (logic/on-add user endpoint body)
             "Invalid token"))))
 
 (defn wrap-request-keywords
@@ -36,7 +36,8 @@
 (def entrypoint
   (-> app-routes
       wrap-request-keywords
-      wrap-cors
+      (wrap-cors :access-control-allow-origin [#".*"]
+                 :access-control-allow-methods [:get :put :post :delete])
       wrap-json-body
       wrap-json-response
       ;; TODO: reject with no auth header
