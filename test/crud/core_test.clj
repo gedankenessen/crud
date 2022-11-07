@@ -1,6 +1,6 @@
-(ns monmon.core-test
+(ns crud.core-test
   (:require [clojure.test :refer :all]
-            [monmon.core :refer :all]))
+            [crud.core :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."

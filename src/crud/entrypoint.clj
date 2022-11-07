@@ -1,4 +1,4 @@
-(ns monmon.entrypoint
+(ns crud.entrypoint
   (:require [org.httpkit.server :as server]
             [compojure.core :refer :all]
             [compojure.route :as route]
@@ -8,7 +8,7 @@
             [clojure.pprint :as pp]
             [clojure.string :as str]
             [clojure.data.json :as json]
-            [monmon.logic :as logic]
+            [crud.logic :as logic]
             [ring.middleware.cors :refer [wrap-cors]]
             [clojure.walk :as walk]))
 

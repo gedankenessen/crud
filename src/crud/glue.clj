@@ -1,6 +1,6 @@
-(ns monmon.glue
-  (:require [monmon.persistence :as p]
-            [monmon.logic :as logic])
+(ns crud.glue
+  (:require [crud.persistence :as p]
+            [crud.logic :as logic])
   (:import org.bson.types.ObjectId [com.mongodb MongoOptions ServerAddress]))
 
 ;; Glues `logic` together with `persistence` to allow consumption for `entrypoints`

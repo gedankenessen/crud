@@ -1,4 +1,4 @@
-(ns monmon.core
+(ns crud.core
   (:gen-class))
 
 (defn -main

@@ -1,5 +1,5 @@
-(ns monmon.logic
-  (:require [monmon.persistence :as p])
+(ns crud.logic
+  (:require [crud.persistence :as p])
   (:import org.bson.types.ObjectId [com.mongodb MongoOptions ServerAddress]))
 
 ;; Which operations does the application have?
