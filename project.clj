@@ -5,7 +5,7 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [org.clojure/data.json "2.4.0"]
-                 [com.novemberain/monger "3.1.0"]
+                 [com.novemberain/monger "3.6.0"]
                  [ring "1.9.4"]
                  [ring/ring-defaults "0.3.3"]
                  [ring/ring-json "0.5.1"]
