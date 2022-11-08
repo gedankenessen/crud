@@ -63,7 +63,7 @@
    :data data})
 
 (defn on-delete [user endpoint id]
-  {:event :delte-data
+  {:event :delete-data
    :user user
    :endpoint endpoint
    :id id})

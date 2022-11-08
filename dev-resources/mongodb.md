@@ -26,53 +26,45 @@ mongosh
 
 ## Data layout
 
-Current layout of the data stored in MongoDB. Uses one collection: `endpoints`.
+Current layout consists out of three collections: `user`, `endpoints`, `data`.
+
+### endpoints
+
+```json
+{
+  "userId": {
+	"$oid": "63691793518fa064ce036c0c"
+  },
+  "methods": [
+	"GET",
+	"PUT",
+	"POST",
+	"DELETE"
+  ],
+  "timestamp": {
+	"$numberLong": "1667921315"
+  },
+  "name": "focus"
+}
+```
+
+### data
 
 ```json
 {
   "_id": {
-    "$oid": "636930dfebf10b58dab566b7"
+	"$oid": "636a75a36a263c5cff4da190"
   },
-  "userId": {
-    "$oid": "63691793518fa064ce036c0c"
+  "endpointId": {
+	"$oid": "636a75a36a263c5cff4da18e"
   },
-  "methods": [
-    "GET",
-    "PUT",
-    "POST",
-    "DELETE"
-  ],
-  "timestamp": {
-    "$numberLong": "1667838175"
-  },
-  "name": "tables",
-  "data": [
-    {
-      "legs": {
-        "$numberLong": "4"
-      },
-      "color": "blue",
-      "height": "120cm",
-      "width": "120cm",
-      "length": "120cm",
-      "_id": {
-        "$oid": "636930dfebf10b58dab566b6"
-      }
-    },
-    {
-      "legs": {
-        "$numberLong": "3"
-      },
-      "color": "brown",
-      "height": "40cm",
-      "width": "200cm",
-      "length": "80cm",
-      "_id": {
-        "$oid": "63693262ebf10b58dab566b9"
-      }
-    }
-  ]
+  "data": {
+	"x": {
+	  "$numberLong": "18"
+	},
+	"y": {
+	  "$numberLong": "24"
+	}
+  }
 }
 ```
-
-Probably will change to two collections: `endpoints` and `data`.

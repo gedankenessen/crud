@@ -13,20 +13,20 @@
 
 (defn on-get [user endpoint]
   (let [action (logic/on-get user endpoint)
-        result (p/get-from-endpoint user endpoint)]
+        result (p/get-data user endpoint)]
     (if (nil? (:data result))
       {:status 404 :message "Endpoint could not be found"}
       (merge {:status 200} result))))
 
 (defn on-get-id [user endpoint id]
   (let [action (logic/on-get-id user endpoint id)
-        result (p/get-from-endpoint-by-id user endpoint id)]
+        result (p/get-data-by-id user endpoint id)]
     (if (nil? (:data result))
       {:status 404 :message "Object with id could not be found"}
       (merge {:status 200} result))))
 
 (defn on-add [user endpoint new-data]
-  (let [old-data (p/get-from-endpoint-last user endpoint)
+  (let [old-data (p/get-data-last user endpoint)
         action (logic/on-add user endpoint old-data new-data)]
     (case (:event action)
       ;; TODO: There is probably a more elegant solution for 3x(user endpoint new-data) ... etc.
@@ -44,4 +44,4 @@
       (merge {:status 200} result))))
 
 (defn on-delete [user endpoint id]
-  (p/delete-data user endpoint id))
+  (p/delete-data-by-id user endpoint id))
