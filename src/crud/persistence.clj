@@ -1,6 +1,7 @@
 (ns crud.persistence
   (:require [monger.core :as mg]
             [monger.collection :as mc]
+            [monger.result :as res]
             [monger.operators :refer [$set $unset]])
   (:import org.bson.types.ObjectId [com.mongodb MongoOptions ServerAddress]))
 
@@ -75,18 +76,23 @@
    "focus"
    config))
 
-(defn add-endpoint [user endpoint methods data config]
-  ;; TODO: Convert _id back to str
-  (select-keys
-   (mc/insert-and-return
-    (mg/get-db (:conn config) (:db config))
-    "endpoints"
-    {:userId (ObjectId. user)
-     :name endpoint
-     :timestamp (quot (System/currentTimeMillis) 1000)
-     :methods methods
-     :data (assoc {} (str (ObjectId.)) data)})
-   [:_id :name]))
+(defn add-endpoint
+  ([user endpoint data config]
+   (add-endpoint user endpoint [:GET :GET-ID :PUT :POST :DELETE] data config))
+  ([user endpoint methods data config]
+   (update
+    (select-keys
+     (mc/insert-and-return
+      (mg/get-db (:conn config) (:db config))
+      "endpoints"
+      {:userId (ObjectId. user)
+       :name endpoint
+       :timestamp (quot (System/currentTimeMillis) 1000)
+       :methods methods
+       :data (assoc {} (str (ObjectId.)) data)})
+     [:_id :name])
+    :_id
+    #(when % (str %)))))
 
 (comment
   ;; Run `add-endpoint`
@@ -100,12 +106,16 @@
 (defn add-version
   "Resets data field"
   [user endpoint data config]
-  (mc/update
-   (mg/get-db (:conn config) (:db config))
-   "endpoints"
-   {:userId (ObjectId. user)
-    :name endpoint}
-   {$set {:data (assoc {} (str (ObjectId.)) data)}}))
+  (let [dataId (str (ObjectId.))]
+    (when
+        (res/acknowledged?
+         (mc/update
+          (mg/get-db (:conn config) (:db config))
+          "endpoints"
+          {:userId (ObjectId. user)
+           :name endpoint}
+          {$set {:data (assoc {} dataId data)}}))
+      dataId)))
 
 (comment
   ;; Run `add-version`
@@ -116,12 +126,16 @@
    config))
 
 (defn add-data [user endpoint data config]
-  (mc/update
-   (mg/get-db (:conn config) (:db config))
-   "endpoints"
-   {:userId (ObjectId. user)
-    :name endpoint}
-   {$set {(str "data." (ObjectId.)) data}}))
+  (let [dataId (str (ObjectId.))]
+    (when
+        (res/acknowledged?
+         (mc/update
+          (mg/get-db (:conn config) (:db config))
+          "endpoints"
+          {:userId (ObjectId. user)
+           :name endpoint}
+          {$set {(str "data." dataId) data}}))
+      dataId)))
 
 (comment
   ;; Run `add-data`
@@ -132,12 +146,15 @@
    config))
 
 (defn update-data [user endpoint id data config]
-  (mc/update
-   (mg/get-db (:conn config) (:db config))
-   "endpoints"
-   {:userId (ObjectId. user)
-    :name endpoint}
-   {$set {(str "data." id) data}}))
+  (when
+      (res/acknowledged?
+       (mc/update
+        (mg/get-db (:conn config) (:db config))
+        "endpoints"
+        {:userId (ObjectId. user)
+         :name endpoint}
+        {$set {(str "data." id) data}}))
+    true))
 
 (comment
   ;; Run `update-data`
@@ -150,12 +167,15 @@
    config))
 
 (defn delete-data-by-id [user endpoint id config]
-  (mc/update
-   (mg/get-db (:conn config) (:db config))
-   "endpoints"
-   {:userId (ObjectId. user)
-    :name endpoint}
-   {$unset (str "data." id)}))
+  (when
+      (res/acknowledged?
+       (mc/update
+        (mg/get-db (:conn config) (:db config))
+        "endpoints"
+        {:userId (ObjectId. user)
+         :name endpoint}
+        {$unset (str "data." id)})))
+  true)
 
 (defn delete-data-from-endpoint [user endpoint]
   "Not yet implemented")

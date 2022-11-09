@@ -16,6 +16,7 @@
 (defn endpoint-changed?
   [old-data new-data]
   ;; Check if keys have changed
+  ;; TODO: Walk nested maps, too!
   (not (= (set (keys old-data)) (set (keys new-data)))))
 
 (comment

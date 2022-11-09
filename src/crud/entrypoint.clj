@@ -23,7 +23,7 @@
         [endpoint]
         (fn [{headers :headers body :body}]
           (if-let [user (:authorization headers)]
-            (glue/on-add user endpoint body)
+            (response (glue/on-add user endpoint body))
             "Invalid token"))))
 
 (defn wrap-request-keywords
