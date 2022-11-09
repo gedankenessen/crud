@@ -26,45 +26,41 @@ mongosh
 
 ## Data layout
 
-Current layout consists out of three collections: `user`, `endpoints`, `data`.
+Currently uses two collections:
+- `user` for `user` data
+- `endpoints` which hold endpoint metadata and the actually submitted data
 
 ### endpoints
 
 ```json
 {
   "userId": {
-	"$oid": "63691793518fa064ce036c0c"
+    "$oid": "63691793518fa064ce036c0c"
   },
   "methods": [
-	"GET",
-	"PUT",
-	"POST",
-	"DELETE"
+    "GET",
+    "PUT",
+    "POST",
+    "DELETE"
   ],
   "timestamp": {
-	"$numberLong": "1667921315"
+    "$numberLong": "1667921315"
   },
-  "name": "focus"
-}
-```
-
-### data
-
-```json
-{
-  "_id": {
-	"$oid": "636a75a36a263c5cff4da190"
-  },
-  "endpointId": {
-	"$oid": "636a75a36a263c5cff4da18e"
-  },
+  "name": "focus",
   "data": {
-	"x": {
-	  "$numberLong": "18"
-	},
-	"y": {
-	  "$numberLong": "24"
-	}
+    "636a75a36a263c5cff4da190": {
+      "_id": {
+        "$oid": "636a75a36a263c5cff4da190"
+      },
+      "data": {
+        "x": {
+          "$numberLong": "18"
+        },
+        "y": {
+          "$numberLong": "24"
+        }
+      }
+    }
   }
 }
 ```

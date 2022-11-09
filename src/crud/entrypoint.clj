@@ -8,22 +8,22 @@
             [clojure.pprint :as pp]
             [clojure.string :as str]
             [clojure.data.json :as json]
-            [crud.logic :as logic]
             [ring.middleware.cors :refer [wrap-cors]]
-            [clojure.walk :as walk]))
+            [clojure.walk :as walk]
+            [crud.glue :as glue]))
 
 (defroutes app-routes
   (GET "/:endpoint"
        [endpoint]
        (fn [{headers :headers}]
          (if-let [user (:authorization headers)]
-           (response (logic/on-get user endpoint))
+           (response (glue/on-get user endpoint))
            "Invalid token")))
   (POST "/:endpoint"
         [endpoint]
         (fn [{headers :headers body :body}]
           (if-let [user (:authorization headers)]
-            (logic/on-add user endpoint body)
+            (glue/on-add user endpoint body)
             "Invalid token"))))
 
 (defn wrap-request-keywords
