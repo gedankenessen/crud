@@ -10,38 +10,37 @@
 ;;       e.g crud.user.glue -> working with user data
 ;;           crud.meta.glue -> working with meta endpoints
 
-
 (defn on-get [user endpoint]
   (let [action (logic/on-get user endpoint)
-        result (p/get-data user endpoint)]
+        result (p/get-data user endpoint p/config)]
     (if (nil? (:data result))
       {:status 404 :message "Endpoint could not be found"}
       (merge {:status 200} result))))
 
 (defn on-get-id [user endpoint id]
   (let [action (logic/on-get-id user endpoint id)
-        result (p/get-data-by-id user endpoint id)]
+        result (p/get-data-by-id user endpoint id  p/config)]
     (if (nil? (:data result))
       {:status 404 :message "Object with id could not be found"}
       (merge {:status 200} result))))
 
 (defn on-add [user endpoint new-data]
-  (let [old-data (p/get-data-last user endpoint)
+  (let [old-data (p/get-data-last user endpoint p/config)
         action (logic/on-add user endpoint old-data new-data)]
     (case (:event action)
       ;; TODO: There is probably a more elegant solution for 3x(user endpoint new-data) ... etc.
-      :add-endpoint (merge {:status 200 } (p/add-endpoint user endpoint new-data))
-      :add-data (merge {:status 200} (p/add-data user endpoint new-data))
-      :add-version (merge {:status 200 } (p/add-version user endpoint new-data))
+      :add-endpoint (merge {:status 200 } (p/add-endpoint user endpoint new-data p/config))
+      :add-data (merge {:status 200} (p/add-data user endpoint new-data p/config))
+      :add-version (merge {:status 200 } (p/add-version user endpoint new-data p/config))
       :else {:status 500})))
 
 (defn on-put [user endpoint id data]
   ;; TODO: No use for action?
   (let [action (logic/on-put user endpoint id data)
-        result (p/update-data user endpoint id data)]
+        result (p/update-data user endpoint id data p/config)]
     (if (nil? (:data result))
       {:status 404 :message "Object with id could not be found"}
       (merge {:status 200} result))))
 
 (defn on-delete [user endpoint id]
-  (p/delete-data-by-id user endpoint id))
+  (p/delete-data-by-id user endpoint id p/config))
