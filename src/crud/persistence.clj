@@ -9,6 +9,22 @@
 
 (def config {:conn @conn :db "crud-testing"})
 
+(defn get-user-data [user config]
+  (mc/find-one-as-map
+   (mg/get-db (:conn config) (:db config))
+   "users"
+   {:_id (ObjectId. user)}))
+
+(defn get-endpoints-by-user [user config]
+  (mc/find-maps
+   (mg/get-db (:conn config) (:db config))
+   "endpoints"
+   {:userId (ObjectId. user)}
+   ["name"]))
+
+(comment
+  (get-endpoints-by-user "63691793518fa064ce036c0c" config))
+
 (defn get-endpoint-id-by-name [user endpoint config]
   (:_id
    (mc/find-one-as-map

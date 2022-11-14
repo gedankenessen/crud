@@ -13,6 +13,12 @@
 ;; Update data in endpoint by id (PUT)
 ;; Delete data in endpoint by id (DELETE)
 
+(def constraints
+  {:keyword-pro "pro"
+   :keyword-free "free"
+   :max-endpoints-free 3
+   :max-endpoints-pro Integer/MAX_VALUE})
+
 (defn endpoint-changed?
   [old-data new-data]
   ;; Check if keys have changed
