@@ -1,8 +1,7 @@
 (ns crud.core
-  (:gen-class))
+  (:gen-class)
+  (:require [crud.entrypoint :as entrypoint]))
 
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (println "Hello, World!"))
+(defn -main [& args]
+  entrypoint/start-server)
 
