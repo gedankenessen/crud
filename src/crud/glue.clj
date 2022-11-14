@@ -13,7 +13,6 @@
 ;;       Endpoint names have to be unique
 ;;       User cannot create infinite endpoints
 
-
 (defn on-get [user endpoint]
   (p/get-data user endpoint p/config))
 
@@ -31,10 +30,11 @@
     (when f
       (f user endpoint new-data p/config))))
 
-
 (defn on-put [user endpoint id data]
   (p/update-data user endpoint id data p/config))
 
-(defn on-delete [user endpoint id]
-  (p/delete-data-by-id user endpoint id p/config))
+(defn on-delete [user endpoint]
+  (p/delete-endpoint user endpoint))
 
+(defn on-delete-by-id [user endpoint id]
+  (p/delete-data-by-id user endpoint id p/config))

@@ -13,18 +13,45 @@
             [crud.glue :as glue]))
 
 (defroutes app-routes
-  (GET "/:endpoint"
-       [endpoint]
-       (fn [{headers :headers}]
-         (if-let [user (:authorization headers)]
-           (response (glue/on-get user endpoint))
-           "Invalid token")))
-  (POST "/:endpoint"
-        [endpoint]
+  (context
+   "/:endpoint"
+   [endpoint]
+   (GET "/:id"
+        [id]
+        (fn [{headers :headers}]
+          (if-let [user (:authorization headers)]
+            (response (glue/on-get-id user endpoint id))
+            "Invalid token")))
+   (GET "/"
+        []
+        (fn [{headers :headers}]
+          (if-let [user (:authorization headers)]
+            (response (glue/on-get user endpoint))
+            "Invalid token")))
+   (POST "/"
+         []
+         (fn [{headers :headers body :body}]
+           (if-let [user (:authorization headers)]
+             (response (glue/on-add user endpoint body))
+             "Invalid token")))
+   (PUT "/:id"
+        [id]
         (fn [{headers :headers body :body}]
           (if-let [user (:authorization headers)]
-            (response (glue/on-add user endpoint body))
-            "Invalid token"))))
+            (response (glue/on-put user endpoint id body))
+            "Invalid token")))
+   (DELETE "/"
+           []
+           (fn [{headers :headers body :body}]
+             (if-let [user (:authorization headers)]
+               (response (glue/on-delete user endpoint))
+               "Invalid token")))
+   (DELETE "/:id"
+           [id]
+           (fn [{headers :headers body :body}]
+             (if-let [user (:authorization headers)]
+               (response (glue/on-delete-by-id user endpoint id))
+               "Invalid token")))))
 
 (defn wrap-request-keywords
   ([handler]

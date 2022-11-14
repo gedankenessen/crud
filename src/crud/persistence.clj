@@ -193,7 +193,7 @@
         {$unset (str "data." id)})))
   true)
 
-(defn delete-data-from-endpoint [user endpoint]
+(defn delete-endpoint [user endpoint]
   "Not yet implemented")
 
 ;; TODO:
