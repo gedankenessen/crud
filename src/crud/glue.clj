@@ -11,7 +11,6 @@
 ;;       e.g crud.user.glue -> working with user data
 ;;           crud.meta.glue -> working with meta endpoints
 ;; TODO: Add business logic, e.g:
-;;       Endpoint names have to be unique
 ;;       User cannot create infinite endpoints
 
 (defn on-get [user endpoint]
@@ -42,11 +41,3 @@
 
 (defn on-delete-by-id [user endpoint id]
   (p/delete-data-by-id user endpoint id p/config))
-
-
-(comment
-  (-> {:data 1}
-      (#(assoc % :event :xD))
-      (#(case (:event %)
-          :xD (:data %)
-          :else 404))))
