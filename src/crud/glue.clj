@@ -28,7 +28,7 @@
       (#(logic/on-add user endpoint (dissoc % :id) new-data))
       (#(case (:event %)
           ;; TODO: Can probably cut down on duplicate code here
-          :add-endpoint (response {:id (p/add-endpoint (:user %) (:endpoint %) (:data %) p/config)})
+          :add-endpoint (response {:id (:_id (p/add-endpoint (:user %) (:endpoint %) (:data %) p/config))})
           :add-data (response {:id (p/add-data (:user %) (:endpoint %) (:data %) p/config)})
           :add-version (response {:id (p/add-version (:user %) (:endpoint %) (:data %) p/config)})
           :else (status {:body {:message "Something went wrong when adding data"}} 500)))))
