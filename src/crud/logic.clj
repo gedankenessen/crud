@@ -65,13 +65,15 @@
      :endpoint endpoint
      :data new-data}))
 
-;; TODO: Should this trigger an endpoint change, too?
-(defn on-put [user endpoint id data]
-  {:event :put-data
-   :user user
-   :endpoint endpoint
-   :id id
-   :data data})
+(defn on-put [user endpoint id data result]
+  (cond
+    (true? result)
+    {:event :put-data-successful
+     :user user
+     :endpoint endpoint
+     :id id
+     :data data}
+    :else {:event :put-data-doesnt-exist}))
 
 (defn on-delete [user endpoint id]
   {:event :delete-data

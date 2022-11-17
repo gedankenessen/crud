@@ -34,7 +34,12 @@
           :else (status {:body {:message "Something went wrong when adding data"}} 500)))))
 
 (defn on-put [user endpoint id data]
-  (p/update-data user endpoint id data p/config))
+  (-> (p/update-data user endpoint id data p/config)
+      (#(logic/on-put user endpoint id data %))
+      (#(case (:event %)
+          :put-data-successful (response data)
+          :put-data-doesnt-exist (status {:body {:message (str "Could not find item with " id)}})
+          :else (status {:body {:message "Something went wrong when changing data"}} 500)))))
 
 (defn on-delete [user endpoint]
   (p/delete-endpoint user endpoint))
