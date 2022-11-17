@@ -21,7 +21,7 @@
    (logic/on-get-id user endpoint id (p/get-data-by-id user endpoint id  p/config))
    (#(case (:event %)
        :get-data-id (response (:data %))
-       :get-data-id-doesnt-exist (not-found (str "Could not find a " endpoint " with id " id))))))
+       :get-data-id-doesnt-exist (not-found {:message (str "Could not find item with id " id)})))))
 
 (defn on-add [user endpoint new-data]
   (-> (p/get-data-last user endpoint p/config)
@@ -31,7 +31,7 @@
           :add-endpoint (response {:id (p/add-endpoint (:user %) (:endpoint %) (:data %) p/config)})
           :add-data (response {:id (p/add-data (:user %) (:endpoint %) (:data %) p/config)})
           :add-version (response {:id (p/add-version (:user %) (:endpoint %) (:data %) p/config)})
-          :else (status "Something went wrong when adding data" 500)))))
+          :else (status {:body {:message "Something went wrong when adding data"}} 500)))))
 
 (defn on-put [user endpoint id data]
   (p/update-data user endpoint id data p/config))

@@ -22,37 +22,37 @@
         (fn [{headers :headers}]
           (if-let [user (:authorization headers)]
             (glue/on-get-id user endpoint id)
-            (status "Invalid token" 401))))
+            (status {:body {:message "Invalid token"}} 401))))
    (GET "/"
         []
         (fn [{headers :headers}]
           (if-let [user (:authorization headers)]
             (glue/on-get user endpoint)
-            (status "Invalid token" 401))))
+            (status {:body {:message "Invalid token"}} 401))))
    (POST "/"
          []
          (fn [{headers :headers body :body}]
            (if-let [user (:authorization headers)]
              (glue/on-add user endpoint body)
-             (status "Invalid token" 401))))
+             (status {:body {:message "Invalid token"}} 401))))
    (PUT "/:id"
         [id]
         (fn [{headers :headers body :body}]
           (if-let [user (:authorization headers)]
             (glue/on-put user endpoint id body)
-            (status "Invalid token" 401))))
+            (status {:body {:message "Invalid token"}} 401))))
    (DELETE "/"
            []
            (fn [{headers :headers body :body}]
              (if-let [user (:authorization headers)]
                (glue/on-delete user endpoint)
-               (status "Invalid token" 401))))
+               (status {:body {:message "Invalid token"}} 401))))
    (DELETE "/:id"
            [id]
            (fn [{headers :headers body :body}]
              (if-let [user (:authorization headers)]
                (glue/on-delete-by-id user endpoint id)
-               (status "Invalid token" 401))))))
+               (status {:body {:message "Invalid token"}} 401))))))
 
 (defn wrap-request-keywords
   ([handler]
