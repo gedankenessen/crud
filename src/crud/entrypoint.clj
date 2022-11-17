@@ -4,7 +4,7 @@
             [compojure.route :as route]
             [ring.middleware.defaults :refer :all]
             [ring.middleware.json :refer :all]
-            [ring.util.response :refer [response]]
+            [ring.util.response :refer [response status]]
             [clojure.pprint :as pp]
             [clojure.string :as str]
             [clojure.data.json :as json]
@@ -12,6 +12,7 @@
             [clojure.walk :as walk]
             [crud.glue :as glue]))
 
+;; TODO: Find way to remove auth header stuff
 (defroutes app-routes
   (context
    "/:endpoint"
@@ -20,38 +21,38 @@
         [id]
         (fn [{headers :headers}]
           (if-let [user (:authorization headers)]
-            (response (glue/on-get-id user endpoint id))
-            "Invalid token")))
+            (glue/on-get-id user endpoint id)
+            (status "Invalid token" 401))))
    (GET "/"
         []
         (fn [{headers :headers}]
           (if-let [user (:authorization headers)]
-            (response (glue/on-get user endpoint))
-            "Invalid token")))
+            (glue/on-get user endpoint)
+            (status "Invalid token" 401))))
    (POST "/"
          []
          (fn [{headers :headers body :body}]
            (if-let [user (:authorization headers)]
-             (response (glue/on-add user endpoint body))
-             "Invalid token")))
+             (glue/on-add user endpoint body)
+             (status "Invalid token" 401))))
    (PUT "/:id"
         [id]
         (fn [{headers :headers body :body}]
           (if-let [user (:authorization headers)]
-            (response (glue/on-put user endpoint id body))
-            "Invalid token")))
+            (glue/on-put user endpoint id body)
+            (status "Invalid token" 401))))
    (DELETE "/"
            []
            (fn [{headers :headers body :body}]
              (if-let [user (:authorization headers)]
-               (response (glue/on-delete user endpoint))
-               "Invalid token")))
+               (glue/on-delete user endpoint)
+               (status "Invalid token" 401))))
    (DELETE "/:id"
            [id]
            (fn [{headers :headers body :body}]
              (if-let [user (:authorization headers)]
-               (response (glue/on-delete-by-id user endpoint id))
-               "Invalid token")))))
+               (glue/on-delete-by-id user endpoint id)
+               (status "Invalid token" 401))))))
 
 (defn wrap-request-keywords
   ([handler]

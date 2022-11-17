@@ -55,10 +55,12 @@
      ["data"]))))
 
 (comment
-  ;; Test for `get-form-endpoint`
+  ;; Test for `get-data`
   ;; for endpoint `products`
   ;; of user `63691793518fa064ce036c0c`
-  (get-data "63691793518fa064ce036c0c" "focus" config))
+  (get-data "63691793518fa064ce036c0c" "focus" config)
+  ;; Do get on non-existent endpoint
+  (get-data "63691793518fa064ce036c0c" "asdfasdfasdf" config))
 
 (defn get-data-by-id [user endpoint id config]
   (first
@@ -78,6 +80,12 @@
    "63691793518fa064ce036c0c"
    "focus"
    "636a75a36a263c5cff4da190"
+   config)
+  ;; Do get-id for non-existent id
+  (get-data-by-id
+   "63691793518fa064ce036c0c"
+   "focus"
+   "123"
    config))
 
 (defn get-data-last [user endpoint config]

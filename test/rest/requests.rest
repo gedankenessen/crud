@@ -20,12 +20,30 @@ GET http://localhost:3004/products/637271044f9fe8013bcf25be
 Accept: application/json
 Authorization: 619806ebd901bc53b9783241
 
-# Get all data for endpoint /pets of user with id
-GET http://localhost:3004/products
+# PUT
+PUT http://localhost:3004/products/637271044f9fe8013bcf25be
 Accept: application/json
 Authorization: 619806ebd901bc53b9783241
+{
+"name": "bolt-cutter",
+"color": "#11cFFd",
+"weight": "11kg"
+}
 
+# Incorrect PUT
+PUT http://localhost:3004/products
+Accept: application/json
+Authorization: 619806ebd901bc53b9783241
+{
+"name": "bolt-cutter",
+"color": "#11cFFd",
+"weight": "11kg"
+}
+
+# DELETE something lol
 DELETE http://localhost:3004/products/637266904f9fe8013bcf25bb
 Accept: application/json
 Authorization: 619806ebd901bc53b9783241
+
+
 
