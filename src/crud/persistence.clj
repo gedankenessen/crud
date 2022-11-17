@@ -215,6 +215,3 @@
    "focus"
    "6376415efe07c10042594b51"
    config))
-
-(defn delete-endpoint [user endpoint]
-  "Not yet implemented")

@@ -41,12 +41,6 @@
           (if-let [user (:authorization headers)]
             (glue/on-put user endpoint id body)
             (status {:body {:message "Invalid token"}} 401))))
-   (DELETE "/"
-           []
-           (fn [{headers :headers body :body}]
-             (if-let [user (:authorization headers)]
-               (glue/on-delete user endpoint)
-               (status {:body {:message "Invalid token"}} 401))))
    (DELETE "/:id"
            [id]
            (fn [{headers :headers body :body}]

@@ -41,8 +41,5 @@
           :put-data-doesnt-exist (status {:body {:message (str "Could not find item with " id)}})
           :else (status {:body {:message "Something went wrong when changing data"}} 500)))))
 
-(defn on-delete [user endpoint]
-  (p/delete-endpoint user endpoint))
-
 (defn on-delete-by-id [user endpoint id]
   (p/delete-data-by-id user endpoint id p/config))

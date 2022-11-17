@@ -8,11 +8,6 @@
 ;; Check if endpoint changed
 ;; Update existing endpoint (POST!)
 
-;; TODO: Afterwards:
-;; Get data in endpoint by id (GET)
-;; Update data in endpoint by id (PUT)
-;; Delete data in endpoint by id (DELETE)
-
 (def constraints
   {:keyword-pro "pro"
    :keyword-free "free"
@@ -75,7 +70,7 @@
      :data data}
     :else {:event :put-data-doesnt-exist}))
 
-(defn on-delete [user endpoint id]
+(defn on-delete-id [user endpoint id]
   {:event :delete-data
    :user user
    :endpoint endpoint
