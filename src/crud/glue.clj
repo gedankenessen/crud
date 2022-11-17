@@ -26,7 +26,7 @@
 
 (defn on-add [user endpoint new-data]
   (-> (p/get-data-last user endpoint p/config)
-      (#(logic/on-add user endpoint % new-data))
+      (#(logic/on-add user endpoint (dissoc % :id) new-data))
       (#(case (:event %)
           ;; TODO: Can probably cut down on duplicate code here
           :add-endpoint (response {:id (p/add-endpoint (:user %) (:endpoint %) (:data %) p/config)})
