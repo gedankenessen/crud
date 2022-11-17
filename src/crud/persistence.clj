@@ -15,6 +15,9 @@
    "users"
    {:_id (ObjectId. user)}))
 
+(comment
+  (get-user-data "63691793518fa064ce036c0c" config))
+
 (defn get-endpoints-by-user [user config]
   (mc/find-maps
    (mg/get-db (:conn config) (:db config))
@@ -39,8 +42,10 @@
   ;; of user `63691793518fa064ce036c0c`
   (get-endpoint-id-by-name "63691793518fa064ce036c0c" "focus" config))
 
+;; TODO: Define bevahiour if user provides id
 (defn get-data [user endpoint config]
-  (vals
+  (map
+   (fn [[k v]] (assoc v :id (name k)))
    (:data
     (mc/find-one-as-map
      (mg/get-db (:conn config) (:db config))
@@ -57,7 +62,8 @@
 
 (defn get-data-by-id [user endpoint id config]
   (first
-   (vals
+   (map
+    (fn [[k v]] (assoc v :id (name k)))
     (:data
      (mc/find-one-as-map
       (mg/get-db (:conn config) (:db config))
@@ -76,7 +82,8 @@
 
 (defn get-data-last [user endpoint config]
   (first
-   (vals
+   (map
+    (fn [[k v]] (assoc v :id (name k)))
     (:data
      (mc/find-one-as-map
       (mg/get-db (:conn config) (:db config))
