@@ -205,13 +205,16 @@
         "endpoints"
         {:userId (ObjectId. user)
          :name endpoint}
-        {$unset (str "data." id)})))
+        {$unset {(str "data." id) 1}})))
   true)
+
+(comment
+  ;; Run `delete-data-by-id`
+  (delete-data-by-id
+   "63691793518fa064ce036c0c"
+   "focus"
+   "6376415efe07c10042594b51"
+   config))
 
 (defn delete-endpoint [user endpoint]
   "Not yet implemented")
-
-;; TODO:
-;; - [ ] Handling errors
-;; - [ ] Restricting access to user
-;; - [x] Use aggregation pipeline instead of fetching 2x
