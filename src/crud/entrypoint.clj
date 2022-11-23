@@ -4,15 +4,23 @@
             [compojure.route :as route]
             [ring.middleware.defaults :refer :all]
             [ring.middleware.json :refer :all]
-            [ring.util.response :refer [response status]]
+            [ring.util.response :refer [response status] :as outgoing]
             [clojure.pprint :as pp]
             [clojure.string :as str]
             [clojure.data.json :as json]
             [ring.middleware.cors :refer [wrap-cors]]
             [clojure.walk :as walk]
-            [crud.glue :as glue]))
+            [crud.persistence.mongo :refer [db]]
+            [crud.logic :as logic]))
+
+(defn handle-work [[data {message status}]]
+  (if data
+    (outgoing/response data)
+    (outgoing/status {:body message} status)))
 
 ;; TODO: Find way to remove auth header stuff
+;; TODO: Handle parameters being nil (do I even need to?)
+;; TODO: Take apeart [data error] structure and handle statuses
 (defroutes app-routes
   (context
    "/:endpoint"
@@ -21,31 +29,31 @@
         [id]
         (fn [{headers :headers}]
           (if-let [user (:authorization headers)]
-            (glue/on-get-id user endpoint id)
+            (handle-work (logic/on-get-id db user endpoint id))
             (status {:body {:message "Invalid token"}} 401))))
    (GET "/"
         []
         (fn [{headers :headers}]
           (if-let [user (:authorization headers)]
-            (glue/on-get user endpoint)
+            (handle-work (logic/on-get db user endpoint))
             (status {:body {:message "Invalid token"}} 401))))
    (POST "/"
          []
          (fn [{headers :headers body :body}]
            (if-let [user (:authorization headers)]
-             (glue/on-add user endpoint body)
+             (handle-work (logic/on-post db user endpoint body))
              (status {:body {:message "Invalid token"}} 401))))
    (PUT "/:id"
         [id]
         (fn [{headers :headers body :body}]
           (if-let [user (:authorization headers)]
-            (glue/on-put user endpoint id body)
+            (handle-work (logic/on-put db user endpoint id body))
             (status {:body {:message "Invalid token"}} 401))))
    (DELETE "/:id"
            [id]
            (fn [{headers :headers body :body}]
              (if-let [user (:authorization headers)]
-               (glue/on-delete-by-id user endpoint id)
+               (handle-work (logic/on-delete-by-id db user endpoint id))
                (status {:body {:message "Invalid token"}} 401))))))
 
 (defn wrap-request-keywords
