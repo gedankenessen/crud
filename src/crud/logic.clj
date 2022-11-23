@@ -1,6 +1,5 @@
 (ns crud.logic
-  (:require [crud.persistence :as p])
-  (:import org.bson.types.ObjectId [com.mongodb MongoOptions ServerAddress]))
+ (:import org.bson.types.ObjectId [com.mongodb MongoOptions ServerAddress]))
 
 ;; Which operations does the application have?
 ;; Get data in endpoint (GET)
