@@ -20,7 +20,6 @@
 
 ;; TODO: Find way to remove auth header stuff
 ;; TODO: Handle parameters being nil (do I even need to?)
-;; TODO: Take apeart [data error] structure and handle statuses
 (defroutes app-routes
   (context
    "/:endpoint"

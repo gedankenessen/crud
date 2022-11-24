@@ -13,3 +13,7 @@
 
 (defn is-persistence? [db]
   (satisfies? Persistence db))
+
+(defn is-response? [response]
+  (and (vector? response)
+       (= (count response) 2)))

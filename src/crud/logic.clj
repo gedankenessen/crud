@@ -1,9 +1,5 @@
 (ns crud.logic
-  (:require [crud.persistence.protocol :refer [Persistence is-persistence?] :as persistence]))
-
-(defn is-response? [response]
-  (and (vector? response)
-       (= (count response) 2)))
+  (:require [crud.persistence.protocol :refer [Persistence is-persistence? is-response?] :as persistence]))
 
 (defn endpoint-changed?
   "Check if keys of `data` have changed"
@@ -21,16 +17,14 @@
   {:pre [(is-persistence? db)]
    :post [(is-response? %)]}
   (let [[data error] (persistence/get-data-last db user endpoint)]
-    (if data
-      (-> data
-          (#(dissoc % :id))
-          (#(cond
-              (nil? %)
-              (persistence/add-data db user endpoint new-data)
-              (endpoint-changed? % new-data)
-              (persistence/add-version db user endpoint new-data)
-              :else (persistence/add-endpoint db user endpoint new-data))))
-      [nil error])))
+    (-> data
+        (#(dissoc % :id))
+        (#(cond
+            (nil? %)
+            (persistence/add-endpoint db user endpoint new-data)
+            (endpoint-changed? % new-data)
+            (persistence/add-version db user endpoint new-data)
+            :else (persistence/add-data db user endpoint new-data))))))
 
 (defn on-delete-by-id [db user endpoint id]
   {:pre [(is-persistence? db)]
