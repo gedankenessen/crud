@@ -6,8 +6,6 @@
             [monger.operators :refer [$set $unset]])
   (:import org.bson.types.ObjectId [com.mongodb MongoOptions ServerAddress] com.mongodb.MongoException))
 
-;; TODO: Handle db errors (e.g no connection)
-
 (defn get-data [config user endpoint]
   {:pre [(is-persistence? config)]
    :post [(is-response? %)]}
@@ -111,7 +109,7 @@
     [{:id id} nil]
     [nil {:message (str "Could not delete item with id " id) :status 500}]))
 
-(defn update-data-by-id [config user endpoint id data]
+(defn update-data-by-id [config user endpoint id new-data]
   {:pre [(is-persistence? config)]
    :post [(is-response? %)]}
   (if (res/acknowledged?
@@ -120,13 +118,12 @@
         "endpoints"
         {:userId (ObjectId. user)
          :name endpoint}
-        {$set {(str "data." id) data}}))
+        {$set {(str "data." id) new-data}}))
     [{:id id} nil]
     [nil {:message (str "Could not update item with id " id) :status 500}]))
 
 (defrecord Mongo-Driver [config]
   Persistence
-  ;; Implementation of functions
   (get-data [config user endpoint] (get-data config user endpoint))
   (get-data-by-id [config user endpoint id] (get-data-by-id config user endpoint id))
   (get-data-last [config user endpoint] (get-data-last config user endpoint))
@@ -134,7 +131,7 @@
   (add-data [config user endpoint new-data] (add-data config user endpoint new-data))
   (add-version [config user endpoint new-data] (add-version config user endpoint new-data))
   (delete-data-by-id [config user endpoint id] (delete-data-by-id config user endpoint id))
-  (update-data-by-id [config user endpoint id data] (update-data-by-id config user endpoint id data)))
+  (update-data-by-id [config user endpoint id new-data] (update-data-by-id config user endpoint id new-data)))
 
 (def conn (delay (mg/connect)))
 (def config {:conn @conn :db "crud-testing"})

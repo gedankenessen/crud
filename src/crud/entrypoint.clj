@@ -19,8 +19,6 @@
     (outgoing/response data)
     (outgoing/status {:body message} status)))
 
-;; TODO: Find way to remove auth header stuff
-;; TODO: Handle parameters being nil (do I even need to?)
 (defroutes app-routes
   (context
    "/:endpoint"
@@ -60,7 +58,6 @@
                  :access-control-allow-methods [:get :put :post :delete])
       wrap-json-body
       wrap-json-response
-      ;; TODO: reject with no auth header
       (wrap-defaults (assoc api-defaults :security {:anti-forgery false}))))
 
 (defn start-server [port]
