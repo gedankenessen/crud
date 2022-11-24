@@ -11,7 +11,8 @@
             [ring.middleware.cors :refer [wrap-cors]]
             [clojure.walk :as walk]
             [crud.persistence.mongo :refer [db]]
-            [crud.logic :as logic]))
+            [crud.logic :as logic])
+  (:import com.mongodb.MongoException))
 
 (defn handle-work [[data {message status}]]
   (if data
@@ -24,36 +25,24 @@
   (context
    "/:endpoint"
    [endpoint]
-   (GET "/:id"
-        [id]
-        (fn [{headers :headers}]
-          (if-let [user (:authorization headers)]
-            (handle-work (logic/on-get-id db user endpoint id))
-            (status {:body {:message "Invalid token"}} 401))))
-   (GET "/"
-        []
-        (fn [{headers :headers}]
-          (if-let [user (:authorization headers)]
-            (handle-work (logic/on-get db user endpoint))
-            (status {:body {:message "Invalid token"}} 401))))
-   (POST "/"
-         []
-         (fn [{headers :headers body :body}]
-           (if-let [user (:authorization headers)]
-             (handle-work (logic/on-post db user endpoint body))
-             (status {:body {:message "Invalid token"}} 401))))
-   (PUT "/:id"
-        [id]
-        (fn [{headers :headers body :body}]
-          (if-let [user (:authorization headers)]
-            (handle-work (logic/on-put db user endpoint id body))
-            (status {:body {:message "Invalid token"}} 401))))
-   (DELETE "/:id"
-           [id]
-           (fn [{headers :headers body :body}]
-             (if-let [user (:authorization headers)]
-               (handle-work (logic/on-delete-by-id db user endpoint id))
-               (status {:body {:message "Invalid token"}} 401))))))
+   (GET "/:id" [id] (fn [{user :token}] (handle-work (logic/on-get-id db user endpoint id))))
+   (GET "/" [] (fn [{user :token}] (handle-work (logic/on-get db user endpoint))))
+   (POST "/" [] (fn [{user :token body :body}] (handle-work (logic/on-post db user endpoint body))))
+   (PUT "/:id" [id] (fn [{user :token body :body}] (handle-work (logic/on-put db user endpoint id body))))
+   (DELETE "/:id" [id] (fn [{user :token body :body}] (handle-work (logic/on-delete-by-id db user endpoint id))))))
+
+(defn wrap-reject-database-errors [handler]
+  (fn [req]
+    (try
+      (handler req)
+      (catch MongoException _
+        (status {:body "Something went wrong"} 500)))))
+
+(defn wrap-reject-no-header [handler]
+  (fn [req]
+    (if (:authorization (:headers req))
+      (handler (assoc req :token (:authorization (:headers req))))
+      (status {:body {:message "Invalid token"} :rest req} 401))))
 
 (defn wrap-request-keywords
   ([handler]
@@ -64,6 +53,8 @@
 
 (def entrypoint
   (-> app-routes
+      wrap-database-errors
+      wrap-reject-no-header
       wrap-request-keywords
       (wrap-cors :access-control-allow-origin [#".*"]
                  :access-control-allow-methods [:get :put :post :delete])

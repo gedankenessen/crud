@@ -4,7 +4,7 @@
             [monger.collection :as mc]
             [monger.result :as res]
             [monger.operators :refer [$set $unset]])
-  (:import org.bson.types.ObjectId [com.mongodb MongoOptions ServerAddress]))
+  (:import org.bson.types.ObjectId [com.mongodb MongoOptions ServerAddress] com.mongodb.MongoException))
 
 ;; TODO: Handle db errors (e.g no connection)
 
@@ -139,6 +139,3 @@
 (def conn (delay (mg/connect)))
 (def config {:conn @conn :db "crud-testing"})
 (def db (map->Mongo-Driver config))
-
-
-
