@@ -29,7 +29,7 @@
    (PUT "/:id" [id] (fn [{user :token body :body}] (handle-work (logic/on-put db user endpoint id body))))
    (DELETE "/:id" [id] (fn [{user :token body :body}] (handle-work (logic/on-delete-by-id db user endpoint id))))))
 
-(defn wrap-reject-database-errors [handler]
+(defn wrap-database-errors [handler]
   (fn [req]
     (try
       (handler req)
