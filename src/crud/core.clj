@@ -3,5 +3,5 @@
   (:require [crud.entrypoint.core :refer :all]))
 
 (defn -main [& args]
-  (start-server 8004))
+  (start-server 3004))
 
