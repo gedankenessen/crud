@@ -1,8 +1,8 @@
 (ns crud.entrypoint.wrappers
   (:require [compojure.core :refer :all]
-            [ring.middleware.defaults :refer :all]
             [ring.middleware.json :refer :all]
             [ring.util.response :refer [response status] :as outgoing]
+            [ring.middleware.defaults :as ringd]
             [ring.middleware.cors :as cors]
             [clojure.walk :as walk])
   (:import com.mongodb.MongoException))
@@ -32,3 +32,8 @@
    handler
    :access-control-allow-origin [#".*"]
    :access-control-allow-methods [:get :put :post :delete]))
+
+(defn wrap-defaults [handler]
+  (ringd/wrap-defaults handler (assoc ringd/api-defaults :security {:anti-forgery false})))
+
+

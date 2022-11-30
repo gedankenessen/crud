@@ -2,7 +2,6 @@
   (:require [org.httpkit.server :as server]
             [compojure.core :refer :all]
             [compojure.route :as route]
-            [ring.middleware.defaults :refer :all]
             [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
             [ring.util.response :refer [response status] :as outgoing]
             [crud.entrypoint.routes :refer :all]
@@ -10,7 +9,8 @@
              :refer [wrap-database
                      wrap-cors
                      wrap-authorization
-                     wrap-keywords]]))
+                     wrap-keywords
+                     wrap-defaults]]))
 
 (def entrypoint
   (-> app-routes
@@ -20,8 +20,7 @@
       wrap-cors
       wrap-json-body
       wrap-json-response
-      ;; TODO: Remove :anti-forgery (also look if wrap-defaults is needed)
-      (wrap-defaults (assoc api-defaults :security {:anti-forgery false}))))
+      wrap-defaults))
 
 (defn start-server [port]
   (println (str "Starting server at http:/127.0.0.1:" port "  ..."))
