@@ -1,44 +1,67 @@
-# crud
+# crud - Build your backend with your frontend
 
-FIXME: description
+This repository contains all the backend services for crud. It's written entirely in Clojure.
+
+## Requirements
+
+- JDK 8 (or above)
+- Clojure 1.10
+
+crud uses a MongoDB as it's main database, so it's best to also have a MongoDB v6.0 (earlier should work, too) installed and running.
 
 ## Installation
 
-Download from http://example.com/FIXME.
+Clone the repo
+
+```
+git clone git@github.com:gedankenessen/crud-backend.git
+```
+
+The necessary deps will be downloaded once you jack-in with your REPL. But you can also download the deps by running
+
+```
+lein deps
+```
+
+As of right now crud expects a MongoDB running on the default port. You can change the behavior in `crud.persistence.mongo`.
 
 ## Usage
 
-FIXME: explanation
+1. Open your favorite editor and navigate to the `crud.core` namespace.
+2. Once there, start your REPL
+3. Either call the `-main` function or evaluate the `start-server` call
 
-    $ java -jar crud-0.1.0-standalone.jar [args]
+The API is now available under `localhost:3004/`. You can interact with crud by making HTTP requests.
 
-## Options
+## Tests
 
-FIXME: listing of options this app accepts.
+You can run specific tests in your REPL or use lein to run them all with
+
+```
+lein test
+```
 
 ## Examples
 
-...
+TODO: FIXME
+
+## Roadmap
+
+TODO: FIXME
+
+## Edgecases
+
+TODO: FIXME
 
 ### Bugs
 
-...
+TODO: FIXME
 
-### Any Other Sections
-### That You Think
-### Might be Useful
 
-## License
+<hr/>
+<div align="center" >
+<a href="https://gedankenessen.github.io/crud-landing/">
+<img width="640" alt="card" src="https://user-images.githubusercontent.com/24259317/202017966-83501535-4b8a-40cd-ae79-ac5e5f8d1d41.png">
+</a>
+</div>
 
-Copyright © 2021 FIXME
-
-This program and the accompanying materials are made available under the
-terms of the Eclipse Public License 2.0 which is available at
-http://www.eclipse.org/legal/epl-2.0.
-
-This Source Code may also be made available under the following Secondary
-Licenses when the conditions for such availability set forth in the Eclipse
-Public License, v. 2.0 are satisfied: GNU General Public License as published by
-the Free Software Foundation, either version 2 of the License, or (at your
-option) any later version, with the GNU Classpath Exception which is available
-at https://www.gnu.org/software/classpath/license.html.
