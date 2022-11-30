@@ -6,12 +6,12 @@
 (def testUserId "637f5eb6aff995fc95105fbd")
 
 (deftest sign-valid-token
-  (let [[token error] (tokens/sign-token testUserId testConfig)]
+  (let [[{token :token} error] (tokens/sign-token testUserId testConfig)]
     (is (string? token))
     (is (nil? error))))
 
 (deftest unsign-valid-token
-  (let [[raw _] (tokens/sign-token testUserId testConfig)
+  (let [[{raw :token} _] (tokens/sign-token testUserId testConfig)
         [token error] (tokens/unsign-token raw testConfig)]
     (is token)
     (is (contains? token :userId))
@@ -27,9 +27,9 @@
     (is error)))
 
 (deftest multi-roundtrip-token
-  (let [[token _] (tokens/sign-token testUserId testConfig)
+  (let [[{token :token} _] (tokens/sign-token testUserId testConfig)
         [{userId :userId} _] (tokens/unsign-token token testConfig)
-        [token _] (tokens/sign-token userId testConfig)
+        [{token :token} _] (tokens/sign-token userId testConfig)
         [token error] (tokens/unsign-token token testConfig)]
     (is (nil? error))
     (is token)

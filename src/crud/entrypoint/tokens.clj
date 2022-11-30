@@ -12,14 +12,14 @@
   ([userId]
    (sign-token userId config))
   ([userId {version :version secret :secret}]
-   [(jwt/sign
+   [{:token (jwt/sign
      (let [now (System/currentTimeMillis)]
        {:userId userId
         :ver version
         :iat now
         ;; Expiration date: today + 30days
         :exp (+ (* 1000 60 60 24 30) now)})
-     secret)
+     secret)}
     nil]))
 
 (comment
@@ -46,6 +46,6 @@
 (comment
   (let [config {:secret "testing" :version 1337}
         userId "63691793518fa064ce036c0c"
-        [token _] (sign-token userId config)
-        [token _] (unsign-token token config)]
-    token))
+        [{token :token} _] (sign-token userId config)
+        data (unsign-token token config)]
+    data))
