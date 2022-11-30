@@ -1,4 +1,4 @@
-(ns crud.logic
+(ns crud.logic.core
   (:require [crud.persistence.protocol :refer [Persistence is-persistence? is-response?] :as persistence]))
 
 (defn endpoint-changed?
