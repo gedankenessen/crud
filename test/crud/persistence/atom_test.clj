@@ -267,6 +267,50 @@
     ;; Is something in data
     (is (= 1 (count (get-in @atom [(keyword user) (keyword endpoint) :data]))))))
 
+(deftest add-data-success
+  (let [atom (atom storage-single-entry)
+        user "63691793518fa064ce036c0c"
+        endpoint "numbers"
+        data {:x 12 :y 12}
+        [response error] (atom/add-data atom user endpoint data)
+        id (str (:id response))]
+    ;; Action susccessful?
+    (is (and (not (nil? data)) (nil? error)))
+    ;; Id not nil?
+    (is (not (nil? id )))
+    ;; Is user still there?
+    (is (contains? @atom (keyword user)))
+    ;; Is endpoint now there?
+    (is (contains? (get @atom (keyword user)) (keyword endpoint)))
+    ;; Does key exist?
+    (is (contains? (get-in @atom [(keyword user) (keyword endpoint) :data]) (keyword id)))
+    ;; Is data in correct format?
+    (is (= data (get-in @atom [(keyword user) (keyword endpoint) :data (keyword id)])))
+    ;; Is something in data
+    (is (= 2 (count (get-in @atom [(keyword user) (keyword endpoint) :data]))))))
+
+(deftest add-data-success
+  (let [atom (atom storage-single-entry)
+        user "63691793518fa064ce036c0c"
+        endpoint "numbers"
+        data {:x 12 :y 12}
+        [response error] (atom/add-data atom user endpoint data)
+        id (str (:id response))]
+    ;; Action susccessful?
+    (is (and (not (nil? data)) (nil? error)))
+    ;; Id not nil?
+    (is (not (nil? id )))
+    ;; Is user still there?
+    (is (contains? @atom (keyword user)))
+    ;; Is endpoint now there?
+    (is (contains? (get @atom (keyword user)) (keyword endpoint)))
+    ;; Does key exist?
+    (is (contains? (get-in @atom [(keyword user) (keyword endpoint) :data]) (keyword id)))
+    ;; Is data in correct format?
+    (is (= data (get-in @atom [(keyword user) (keyword endpoint) :data (keyword id)])))
+    ;; Is something in data
+    (is (= 2 (count (get-in @atom [(keyword user) (keyword endpoint) :data]))))))
+
 ;; TODO: Tests add-data
 ;; TODO: Tests add-version
 ;; TODO: Tests delete-data-by-id
