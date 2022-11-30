@@ -1,6 +1,6 @@
-(defproject crud "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+(defproject crud "0.0.1-SNAPSHOT"
+  :description "Backend Service for crud - Build your backend from your frontend"
+  :url "https://crud.gedankenessen.de/"
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.3"]
