@@ -65,5 +65,5 @@
     [[data {message :message status :status}] _]
     (if data
       (outgoing/response data)
-      (outgoing/status {:body message} status))))
+      (outgoing/status {:body {:message message}} status))))
 
