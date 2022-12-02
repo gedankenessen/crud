@@ -13,8 +13,10 @@
   (fn [req]
     (try
       (handler req)
+      (catch IllegalArgumentException _
+        (status {:body {:message "Malformed token"}} 403))
       (catch MongoException _
-        (status {:body "Something went wrong"} 500)))))
+        (status {:body {:message "Something went wrong"}} 500)))))
 
 (defn wrap-authorization [handler]
   (fn [req]
