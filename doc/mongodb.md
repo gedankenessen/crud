@@ -27,7 +27,7 @@ mongosh
 ## Data layout
 
 Currently uses two collections:
-- `user` for `user` data
+- `users` for `user` data
 - `endpoints` which hold endpoint metadata and the actually submitted data
 
 ### endpoints
@@ -62,5 +62,17 @@ Currently uses two collections:
       }
     }
   }
+}
+```
+
+### users
+
+```
+{
+  "_id": {
+	"$oid": "63691793518fa064ce036c0c"
+  },
+  "name": "Marlon",
+  "membership": "pro"
 }
 ```
