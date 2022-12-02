@@ -12,15 +12,18 @@
   ([userId]
    (sign-token userId config))
   ([userId {version :version secret :secret}]
-   [{:token (jwt/sign
-     (let [now (System/currentTimeMillis)]
-       {:userId userId
-        :ver version
-        :iat now
-        ;; Expiration date: today + 30days
-        :exp (+ (* 1000 60 60 24 30) now)})
-     secret)}
-    nil]))
+   (if (or (not userId)
+           (empty? userId))
+     [nil {:message "Something went wrong" :status 500}]
+     [{:token (jwt/sign
+               (let [now (System/currentTimeMillis)]
+                 {:userId userId
+                  :ver version
+                  :iat now
+                  ;; Expiration date: today + 30days
+                  :exp (+ (* 1000 60 60 24 30) now)})
+               secret)}
+      nil])))
 
 (comment
   (sign-token "63691793518fa064ce036c0c" config))
