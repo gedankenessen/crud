@@ -14,7 +14,8 @@
   ;; This started out with the core functions needed for the business logic
   ;; Now I'm adding user related functions though
   ;; Should spend time in future to use extend-protocol
-  (get-user [db id] "Get `user` data by `id`")
+  (get-user-by-email [db email] "Get `user´ data by `email`")
+  (get-user-by-id [db id] "Get `user` data by `id`")
   (add-user [db data] "Add `user` with `data`")
   (update-user [db id data] "Update `user` with `data` by `id`")
   (delete-user [db id] "Delete `user` with `id`"))

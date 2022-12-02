@@ -123,7 +123,18 @@
     [nil {:message (str "Could not update item with id " id) :status 500}]))
 
 
-(defn get-user [config id]
+(defn get-user-by-email [config email]
+  {:pre [(is-persistence? config)]
+   :post [(is-response? %)]}
+  (if-let [result (first
+                   (mc/find-maps
+                    (mg/get-db (:conn config) (:db config))
+                    "users"
+                    {:email email}))]
+    [(dissoc (assoc result :id (str (:_id result))) :_id) nil]
+    [nil {:message (str "Could not find user with email " email) :status 404}]))
+
+(defn get-user-by-id [config id]
   {:pre [(is-persistence? config)]
    :post [(is-response? %)]}
   (if-let
@@ -187,7 +198,8 @@
   (delete-data-by-id [config user endpoint id] (delete-data-by-id config user endpoint id))
   (update-data-by-id [config user endpoint id new-data] (update-data-by-id config user endpoint id new-data))
   ;; User related functions
-  (get-user [config id] (get-user config id))
+  (get-user-by-email [config email] (get-user-by-email config email))
+  (get-user-by-id [config id] (get-user-by-id config id))
   (add-user [config data] (add-user config data))
   (update-user [config id data] (update-user config id data))
   (delete-user [config id] (delete-user config id)))
