@@ -22,7 +22,7 @@
   (fn [req]
     (if (:authorization (:headers req))
       (handler (assoc req :token (:authorization (:headers req))))
-      (status {:body {:message "Invalid token"} :rest req} 401))))
+      (status {:body {:message "Authorization token is missing"} :rest req} 401))))
 
 (defn wrap-keywords
   ([handler]
