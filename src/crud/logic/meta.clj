@@ -1,10 +1,11 @@
-(ns crud.logic.meta)
+(ns crud.logic.meta
+  (:require [crud.persistence.protocol :refer [Persistence is-persistence? is-response?] :as persistence]))
 
-(defn delete-endpoint [id]
+(defn delete-endpoint [db id]
   [{:message "Successfully deleted endpoint"} nil])
 
-(defn update-endpoint [id data]
+(defn update-endpoint [db id data]
   [{:message "Successfully updated endpoint"} nil])
 
-(defn get-endpoint [id]
+(defn get-endpoint [db id]
   [{} nil])

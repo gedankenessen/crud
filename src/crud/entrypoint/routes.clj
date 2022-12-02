@@ -27,9 +27,9 @@
   "Meta routes to work with the endpoints themselves. Requires authorization header."
   (context
    "/meta/:id" [id]
-   (DELETE "/" [] (fn [_] (meta/delete-endpoint id)))
-   (GET "/" [] (fn [_] (meta/get-endpoint id)))
-   (PUT "/" [] (fn [{body :body}] (meta/update-endpoint id body)))))
+   (DELETE "/" [] (fn [_] (meta/delete-endpoint db id)))
+   (GET "/" [] (fn [_] (meta/get-endpoint db id)))
+   (PUT "/" [] (fn [{body :body}] (meta/update-endpoint db id body)))))
 
 ;; TODO: Refactor from `/endpoints` to `/build` or `/crud` ?
 (defroutes crud-routes
