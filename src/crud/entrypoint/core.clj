@@ -4,14 +4,18 @@
             [compojure.route :as route]
             [ring.util.response :refer [response status] :as outgoing]
             [crud.entrypoint.routes :refer :all]
-            [crud.entrypoint.wrappers :refer [meta-wrappers crud-wrappers]]))
+            [crud.entrypoint.wrappers :refer [unauthorized-wrappers authorized-wrappers]]))
 
 (def app-routes
   (routes
+   (-> signup-routes
+       unauthorized-wrappers)
    (-> meta-routes
-       meta-wrappers)
+       authorized-wrappers)
    (-> crud-routes
-       crud-wrappers)))
+       authorized-wrappers)
+   (-> user-routes
+       authorized-wrappers)))
 
 (defn start-server [port]
   (println (str "Starting server at http:/127.0.0.1:" port "  ..."))

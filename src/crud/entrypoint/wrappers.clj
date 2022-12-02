@@ -38,7 +38,7 @@
 (defn wrap-defaults [handler]
   (ringd/wrap-defaults handler (assoc ringd/api-defaults :security {:anti-forgery false})))
 
-(def meta-wrappers
+(def unauthorized-wrappers
   #(-> %
        wrap-json-response
        wrap-database
@@ -47,7 +47,7 @@
        wrap-json-body
        wrap-defaults))
 
-(def crud-wrappers
+(def authorized-wrappers
   #(-> %
        wrap-database
        wrap-authorization
