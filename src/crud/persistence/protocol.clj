@@ -9,7 +9,15 @@
   (add-data [db user endpoint new-data] "Add `data` entry in `endpoint` from `user` with contens of `new-data`")
   (add-version [db user endpoint new-data] "Overrides `data` entry in `endpoint` from `user` with `new-data`")
   (delete-data-by-id [db user endpoint id] "Delete `data` with `id` in `endpoint` from `user` with")
-  (update-data-by-id [db user endpoint id new-data] "Update `new-data` with `id` in `endpoint` from `user`"))
+  (update-data-by-id [db user endpoint id new-data] "Update `new-data` with `id` in `endpoint` from `user`")
+  ;; TODO: Look into extend-protocol best practises
+  ;; This started out with the core functions needed for the business logic
+  ;; Now I'm adding user related functions though
+  ;; Should spend time in future to use extend-protocol
+  (get-user [db id] "Get `user` data by `id`")
+  (add-user [db data] "Add `user` with `data`")
+  (update-user [db id data] "Update `user` with `data` by `id`")
+  (delete-user [db id] "Delete `user` with `id`"))
 
 (defn is-persistence? [db]
   (satisfies? Persistence db))

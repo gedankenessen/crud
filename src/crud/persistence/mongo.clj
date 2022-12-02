@@ -122,8 +122,62 @@
     [{:id id} nil]
     [nil {:message (str "Could not update item with id " id) :status 500}]))
 
+
+(defn get-user [config id]
+  {:pre [(is-persistence? config)]
+   :post [(is-response? %)]}
+  (if-let
+      [result (mc/find-map-by-id
+               (mg/get-db (:conn config) (:db config))
+               "users"
+               (ObjectId. id))]
+    [(dissoc (assoc result :id (str (:_id result))) :_id) nil]
+    [nil {:message (str "Could not find user with id " id) :status 404}]))
+
+(defn add-user [config data]
+  {:pre [(is-persistence? config)]
+   :post [(is-response? %)]}
+  (let [id (ObjectId.)
+        result (mc/insert
+                (mg/get-db (:conn config) (:db config))
+                "users"
+                (assoc data :_id id))]
+    (if (res/acknowledged? result)
+      [{:id (str id)} nil]
+      [nil {:message "Could not add user" :status 500}])))
+
+(defn update-user [config id data]
+  {:pre [(is-persistence? config)]
+   :post [(is-response? %)]}
+  (let [result
+        (mc/update-by-id
+         (mg/get-db (:conn config) (:db config))
+         "users"
+         (ObjectId. id)
+         ;; Dissoc :_id to remove ability for shenanigans
+         ;; Does however expect upper layer to have sanitized data (somewhat)
+         (dissoc data :_id))]
+    (if (and
+         (res/acknowledged? result)
+         (res/updated-existing? result))
+      [{:id id} nil]
+      [nil {:message "Could not update user" :status 500}])))
+
+(defn delete-user [config id]
+  {:pre [(is-persistence? config)]
+   :post [(is-response? %)]}
+  (let [result
+        (mc/remove-by-id
+         (mg/get-db (:conn config) (:db config))
+         "users"
+         (ObjectId. id))]
+    (if (res/acknowledged? result)
+      [{:id id} nil]
+      [nil {:message "Could not delete user" :status 500}])))
+
 (defrecord Mongo-Driver [config]
   Persistence
+  ;; CRUD functions
   (get-data [config user endpoint] (get-data config user endpoint))
   (get-data-by-id [config user endpoint id] (get-data-by-id config user endpoint id))
   (get-data-last [config user endpoint] (get-data-last config user endpoint))
@@ -131,7 +185,12 @@
   (add-data [config user endpoint new-data] (add-data config user endpoint new-data))
   (add-version [config user endpoint new-data] (add-version config user endpoint new-data))
   (delete-data-by-id [config user endpoint id] (delete-data-by-id config user endpoint id))
-  (update-data-by-id [config user endpoint id new-data] (update-data-by-id config user endpoint id new-data)))
+  (update-data-by-id [config user endpoint id new-data] (update-data-by-id config user endpoint id new-data))
+  ;; User related functions
+  (get-user [config id] (get-user config id))
+  (add-user [config data] (add-user config data))
+  (update-user [config id data] (update-user config id data))
+  (delete-user [config id] (delete-user config id)))
 
 (def conn (delay (mg/connect)))
 (def config {:conn @conn :db "crud-testing"})
