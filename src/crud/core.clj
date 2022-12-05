@@ -3,5 +3,5 @@
   (:require [crud.entrypoint.core :refer :all]))
 
 (defn -main [& args]
-  (start-server 3004))
+  (start-server (merge args {:port 3004})))
 
