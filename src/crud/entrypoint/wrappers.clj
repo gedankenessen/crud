@@ -7,7 +7,8 @@
             [ring.middleware.defaults :as ringd]
             [ring.middleware.content-type :refer [wrap-content-type]]
             [ring.middleware.cors :as cors]
-            [clojure.walk :as walk])
+            [clojure.walk :as walk]
+            [crud.entrypoint.tokens :refer [unsign-token]])
   (:import com.mongodb.MongoException))
 
 (defn wrap-database [handler]
@@ -22,8 +23,8 @@
 (defn wrap-authorization [handler]
   (fn [req]
     (if (-> req :headers :authorization)
-      ;; TODO: Validate token and unsign
-      (handler (assoc req :token (:authorization (:headers req))))
+      (let [[token error] (unsign-token (-> req :headers :authorization))]
+        (or error (handler (assoc req :token (:userId token)))))
       (status {:body {:message "Authorization token is missing"}} 401))))
 
 (defn wrap-keywords
