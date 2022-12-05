@@ -9,6 +9,7 @@
 ;; TODO: Wrap with try-catch!
 ;; TODO: Defaults to hs256, is this good enough?
 (defn sign-token
+  "Return a token from a `userId` and `config`"
   ([userId]
    (sign-token userId config))
   ([userId {version :version secret :secret}]
@@ -29,22 +30,25 @@
   (sign-token "63691793518fa064ce036c0c" config))
 
 (defn unsign-token
+  "Unwrap token to `userId` and other metadata"
   ([token]
    (unsign-token token config))
   ([token {secret :secret}]
    (try
-     (let [token (jwt/unsign token secret)]
-       (cond
-         ;; Case: token or userId is null
-         (nil? (:userId token)) [nil {:message "Malformed token"} :status 403]
-         ;; exp is null?
-         (nil? (:exp token)) [nil {:message "Malformed token"} :status 403]
-         ;; token is expired?
-         (< (:exp token) (System/currentTimeMillis)) [nil {:message "Expired token" :status 403}]
-         ;; token should be valid
-         :else [token nil]))
+     (if (or (nil? token) (empty? token))
+       [nil {:message "Authorization token is missing" :status 401}]
+       (let [token (jwt/unsign token secret)]
+         (cond
+           ;; Case: token or userId is null
+           (nil? (:userId token)) [nil {:message "Malformed token" :status 403}]
+           ;; exp is null?
+           (nil? (:exp token)) [nil {:message "Malformed token" :status 403}]
+           ;; token is expired?
+           (< (:exp token) (System/currentTimeMillis)) [nil {:message "Expired token" :status 403}]
+           ;; token should be valid
+           :else [token nil])))
      (catch Exception _
-       [nil {:message "Malformed token"} :status 403]))))
+       [nil {:message "Malformed token" :status 403}]))))
 
 (comment
   (let [config {:secret "testing" :version 1337}

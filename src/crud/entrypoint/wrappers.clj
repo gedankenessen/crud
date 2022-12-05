@@ -22,10 +22,10 @@
 
 (defn wrap-authorization [handler]
   (fn [req]
-    (if (-> req :headers :authorization)
-      (let [[token error] (unsign-token (-> req :headers :authorization))]
-        (or error (handler (assoc req :token (:userId token)))))
-      (status {:body {:message "Authorization token is missing"}} 401))))
+    (let [[{token :userId} error] (unsign-token (-> req :headers :authorization))]
+      (if error
+        (status {:body {:message (:message error)}} (:status error))
+        (handler (assoc req :token token))))))
 
 (defn wrap-keywords
   ([handler]
@@ -56,7 +56,7 @@
   clojure.lang.PersistentVector
   (render
     [[data {message :message status :status}] _]
-    (if data
+    (if (and (not message) (not status))
       (outgoing/response data)
-      (outgoing/status {:body {:message message}} status))))
+      (outgoing/status {:body {:message "lol"}} status))))
 
