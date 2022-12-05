@@ -13,7 +13,9 @@
                  [ring-cors "0.1.13"]
                  [http-kit "2.5.3"]
                  [compojure "1.6.2"]
-                 [buddy/buddy-sign "3.4.333"]]
+                 [buddy/buddy-sign "3.4.333"]
+                 [buddy/buddy-hashers "1.8.158"]
+                 [buddy/buddy-core "1.10.413"]]
   :main ^:skip-aot crud.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
