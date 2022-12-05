@@ -23,17 +23,19 @@
 (defn get-data-by-id [config user endpoint id]
   {:pre [(is-persistence? config)]
    :post [(is-response? %)]}
-  [(first
-    (map
-     (fn [[k v]] (assoc v :id (name k)))
-     (:data
-      (mc/find-one-as-map
-       (mg/get-db (:conn config) (:db config))
-       "endpoints"
-       {:name endpoint
-        :userId (ObjectId. user)}
-       [(str "data." id)]))))
-   nil])
+  (if-let [response
+           (first
+            (map
+             (fn [[k v]] (assoc v :id (name k)))
+             (:data
+              (mc/find-one-as-map
+               (mg/get-db (:conn config) (:db config))
+               "endpoints"
+               {:name endpoint
+                :userId (ObjectId. user)}
+               [(str "data." id)]))))]
+    [response nil]
+    [nil {:message (str "Item with id " id " on endpoint /" endpoint " does not exist") :status 404}]))
 
 (defn get-data-last [config user endpoint]
   {:pre [(is-persistence? config)]
