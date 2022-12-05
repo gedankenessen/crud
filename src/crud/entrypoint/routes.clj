@@ -3,6 +3,7 @@
              [ring.util.response :refer [response status] :as outgoing]
              [crud.persistence.mongo :refer [db]]
              [crud.entrypoint.tokens :refer [sign-token config]]
+             [crud.entrypoint.wrappers :refer [wrap-authorization]]
              [crud.logic.core :as logic]
              [crud.logic.user :as user]
              [crud.logic.meta :as meta]))
@@ -18,18 +19,18 @@
   "Routes for user (token) related actions. Requires authorization header."
   (context
    "/user" []
-   (GET "/" [] (fn [{token :token}] (user/details db token)))
-   (PUT "/" [] (fn [{token :token body :body}] (user/details db token body)))
-   (DELETE "/" [] (fn [{token :token body :body}] (user/delete db token body)))
-   (POST "/token" [] (fn [{body :body}] (sign-token (:id body) config)))))
+   (GET "/" [] (wrap-authorization (fn [{token :token}] (user/details db token))))
+   (PUT "/" [] (wrap-authorization (fn [{token :token body :body}] (user/details db token body))))
+   (DELETE "/" [] (wrap-authorization (fn [{token :token body :body}] (user/delete db token body))))
+   (POST "/token" [] (wrap-authorization (fn [{body :body}] (sign-token (:id body) config))))))
 
 (defroutes meta-routes
   "Meta routes to work with the endpoints themselves. Requires authorization header."
   (context
    "/meta/:id" [id]
-   (DELETE "/" [] (fn [_] (meta/delete-endpoint db id)))
-   (GET "/" [] (fn [_] (meta/get-endpoint db id)))
-   (PUT "/" [] (fn [{body :body}] (meta/update-endpoint db id body)))))
+   (DELETE "/" [] (wrap-authorization (fn [_] (meta/delete-endpoint db id))))
+   (GET "/" [] (wrap-authorization (fn [_] (meta/get-endpoint db id))))
+   (PUT "/" [] (wrap-authorization (fn [{body :body}] (meta/update-endpoint db id body))))))
 
 ;; TODO: Refactor from `/endpoints` to `/build` or `/crud` ?
 (defroutes crud-routes
@@ -37,9 +38,8 @@
   (context
    "/endpoints/:endpoint"
    [endpoint]
-   (GET "/:id" [id] (fn [{user :token}] (logic/on-get-id db user endpoint id)))
-   (GET "/" [] (fn [{user :token}] (logic/on-get db user endpoint)))
-   ;; TODO: Something is wrong with :body
-   (POST "/" [] (fn [{user :token body :body}] (logic/on-post db user endpoint body)))
-   (PUT "/:id" [id] (fn [{user :token body :body}] (logic/on-put db user endpoint id body)))
-   (DELETE "/:id" [id] (fn [{user :token body :body}] (logic/on-delete-by-id db user endpoint id)))))
+   (GET "/:id" [id] (wrap-authorization (fn [{user :token}] (logic/on-get-id db user endpoint id))))
+   (GET "/" [] (wrap-authorization (fn [{user :token}] (logic/on-get db user endpoint))))
+   (POST "/" [] (wrap-authorization (fn [{user :token body :body}] (logic/on-post db user endpoint body))))
+   (PUT "/:id" [id] (wrap-authorization (fn [{user :token body :body}] (logic/on-put db user endpoint id body))))
+   (DELETE "/:id" [id] (wrap-authorization (fn [{user :token body :body}] (logic/on-delete-by-id db user endpoint id))))))

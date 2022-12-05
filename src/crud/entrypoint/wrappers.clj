@@ -5,6 +5,7 @@
             [ring.util.response :refer [response status] :as outgoing]
             [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
             [ring.middleware.defaults :as ringd]
+            [ring.middleware.content-type :refer [wrap-content-type]]
             [ring.middleware.cors :as cors]
             [clojure.walk :as walk])
   (:import com.mongodb.MongoException))
@@ -21,6 +22,7 @@
 (defn wrap-authorization [handler]
   (fn [req]
     (if (-> req :headers :authorization)
+      ;; TODO: Validate token and unsign
       (handler (assoc req :token (:authorization (:headers req))))
       (status {:body {:message "Authorization token is missing"}} 401))))
 
@@ -37,27 +39,17 @@
    :access-control-allow-origin [#".*"]
    :access-control-allow-methods [:get :put :post :delete]))
 
-(defn wrap-defaults [handler]
-  (ringd/wrap-defaults handler (assoc ringd/api-defaults :security {:anti-forgery false})))
+(def wrap-defaults #(ringd/wrap-defaults % (assoc ringd/api-defaults :security {:anti-forgery false})))
 
-(def unauthorized-wrappers
-  #(-> %
-       wrap-json-response
-       wrap-database
-       wrap-keywords
-       wrap-cors
-       wrap-json-body
-       wrap-defaults))
-
-(def authorized-wrappers
+(def wrappers
   #(-> %
        wrap-database
-       wrap-authorization
-       wrap-keywords
-       wrap-cors
-       wrap-json-body
        wrap-json-response
-       wrap-defaults))
+       wrap-keywords
+       wrap-json-body
+       wrap-cors
+       wrap-defaults
+       wrap-content-type))
 
 (extend-protocol Renderable
   clojure.lang.PersistentVector

@@ -3,23 +3,24 @@
             [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.util.response :refer [response status] :as outgoing]
+            [ring.middleware.reload :refer [wrap-reload]]
             [crud.entrypoint.routes :refer :all]
-            [crud.entrypoint.wrappers :refer [unauthorized-wrappers authorized-wrappers]]))
+            [crud.entrypoint.wrappers :refer [wrappers wrap-authorization]]))
 
-(def app-routes
-  (routes
-   (-> signup-routes
-       unauthorized-wrappers)
-   (-> meta-routes
-       authorized-wrappers)
-   (-> crud-routes
-       authorized-wrappers)
-   (-> user-routes
-       authorized-wrappers)))
+(defroutes app-routes
+  (wrappers
+   (routes
+    user-routes
+    signup-routes
+    meta-routes
+    crud-routes)))
+
+(def reloaded-app
+  (wrap-reload #'app-routes))
 
 (defn start-server [port]
   (println (str "Starting server at http:/127.0.0.1:" port "  ..."))
-  (server/run-server app-routes {:port port :legacy-return-value? false}))
+  (server/run-server reloaded-app {:port port :legacy-return-value? false}))
 
 (comment
   (def server (atom (start-server 3004)))
