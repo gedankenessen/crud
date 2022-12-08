@@ -7,35 +7,35 @@
   ;; TODO: Walk nested maps, too!
   (not (= (set (keys old-data)) (set (keys new-data)))))
 
-(defn on-get [db user endpoint]
+(defn on-get [db userId endpoint]
   {:pre [(is-persistence? db)]
    :post [(is-response? %)]}
-  (persistence/get-data db user endpoint))
+  (persistence/get-data db userId endpoint))
 
-(defn on-get-id [db user endpoint id]
+(defn on-get-id [db userId endpoint id]
   {:pre [(is-persistence? db)]
    :post [(is-response? %)]}
-  (persistence/get-data-by-id db user endpoint id))
+  (persistence/get-data-by-id db userId endpoint id))
 
-(defn on-post [db user endpoint new-data]
+(defn on-post [db userId endpoint new-data]
   {:pre [(is-persistence? db)]
    :post [(is-response? %)]}
-  (-> (persistence/get-data-last db user endpoint)
+  (-> (persistence/get-data-last db userId endpoint)
       (#(first %))
       (#(dissoc % :id))
       (#(cond
           (nil? %)
-          (persistence/add-endpoint db user endpoint new-data)
+          (persistence/add-endpoint db userId endpoint new-data)
           (endpoint-changed? % new-data)
-          (persistence/add-version db user endpoint new-data)
-          :else (persistence/add-data db user endpoint new-data)))))
+          (persistence/add-version db userId endpoint new-data)
+          :else (persistence/add-data db userId endpoint new-data)))))
 
-(defn on-delete-by-id [db user endpoint id]
+(defn on-delete-by-id [db userId endpoint id]
   {:pre [(is-persistence? db)]
    :post [(is-response? %)]}
-  (persistence/delete-data-by-id db user endpoint id))
+  (persistence/delete-data-by-id db userId endpoint id))
 
-(defn on-put [db user endpoint id data]
+(defn on-put [db userId endpoint id data]
   {:pre [(is-persistence? db)]
    :post [(is-response? %)]}
-  (persistence/update-data-by-id db user endpoint id data))
+  (persistence/update-data-by-id db userId endpoint id data))

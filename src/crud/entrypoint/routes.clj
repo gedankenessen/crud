@@ -11,18 +11,18 @@
 (defroutes signup-routes
   "Routes for account sign-up. Does not require an authorization header to be present."
   (context
-   "/user" []
-   (POST "/register" [] (fn [{body :body}] (user/register db body)))
-   (POST "/login" [] (fn [{body :body}] (user/login db body)))))
+   "/user" {body :body}
+   (POST "/register" [] (fn [_] (user/register db body)))
+   (POST "/login" [] (fn [_] (user/login db body)))))
 
 (defroutes user-routes
   "Routes for user (token) related actions. Requires authorization header."
   (wrap-routes
    (context
-    "/user" []
-    (GET "/" [] (fn [{token :token}] (user/details db token)))
-    (PUT "/" [] (fn [{token :token body :body}] (user/details db token body)))
-    (DELETE "/" [] (fn [{token :token body :body}] (user/delete db token body)))
+    "/user" {userId :token}
+    (GET "/" [] (fn [_] (user/details db userId)))
+    (PUT "/" [] (fn [{body :body}] (user/details db userId body)))
+    (DELETE "/" [] (fn [{body :body}] (user/delete db userId body)))
     (POST "/token" [] (fn [{body :body}] (sign-token (:id body) config))))
    wrap-authorization))
 
