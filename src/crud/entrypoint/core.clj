@@ -18,9 +18,9 @@
 (def reloaded-app
   (wrap-reload #'app-routes))
 
-(defn start-server [{port :port}]
+(defn start-server [{port :port  app :app, :or {port 3004 app reloaded-app}}]
   (println (str "Starting server at http:/127.0.0.1:" port " at: " (System/currentTimeMillis)))
-  (server/run-server reloaded-app {:port port :legacy-return-value? false}))
+  (server/run-server app {:port port :legacy-return-value? false}))
 
 (comment
   (def server (atom (start-server {:port 3004})))
