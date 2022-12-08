@@ -42,9 +42,22 @@
 
 (def wrap-defaults #(ringd/wrap-defaults % (assoc ringd/api-defaults :security {:anti-forgery false})))
 
+(defn wrap-is-content-type
+  "Check if the content type is set to `application/json` on :post and :put request."
+  [handler]
+  (fn [req]
+    (println req)
+    (let [method (-> req :request-method)
+          type (-> req :headers :content-type)]
+      (if (and (or (= method :post) (= method :put))
+               (not (= type "application/json")))
+        (status {:body "Incorrect Content-Type provided (should be application/json)"} 400)
+        (handler req)))))
+
 (def wrappers
   #(-> %
        wrap-database
+       wrap-is-content-type
        wrap-keywords
        wrap-json-body
        wrap-cors
