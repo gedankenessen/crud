@@ -1,7 +1,7 @@
 (ns crud.entrypoint.routes
   (:require  [compojure.core :refer :all]
              [ring.util.response :refer [response status] :as outgoing]
-             [crud.persistence.mongo :refer [db]]
+             [crud.persistence.mongo.core :refer [db]]
              [crud.entrypoint.tokens :refer [sign-token config]]
              [crud.entrypoint.wrappers :refer [wrap-authorization]]
              [crud.logic.core :as logic]
