@@ -15,7 +15,7 @@
                     (mg/get-db (:conn config) (:db config))
                     "users"
                     {:email email}))]
-    [(dissoc (assoc result :id (str (:_id result))) :_id) nil]
+    [result nil]
     [nil {:message (str "Could not find user with email " email) :status 404}]))
 
 (defn get-user-by-id [config id]
@@ -26,7 +26,7 @@
                (mg/get-db (:conn config) (:db config))
                "users"
                (ObjectId. id))]
-    [(dissoc (assoc result :id (str (:_id result))) :_id) nil]
+    [result nil]
     [nil {:message (str "Could not find user with id " id) :status 404}]))
 
 (defn add-user [config data]
@@ -38,7 +38,7 @@
                 "users"
                 (assoc data :_id id))]
     (if (res/acknowledged? result)
-      [{:id (str id)} nil]
+      [{:_id (str id)} nil]
       [nil {:message "Could not add user" :status 500}])))
 
 (defn update-user [config id data]
@@ -55,7 +55,7 @@
     (if (and
          (res/acknowledged? result)
          (res/updated-existing? result))
-      [{:id id} nil]
+      [{:_id (str id)} nil]
       [nil {:message "Could not update user" :status 500}])))
 
 (defn delete-user [config id]
@@ -67,5 +67,5 @@
          "users"
          (ObjectId. id))]
     (if (res/acknowledged? result)
-      [{:id id} nil]
+      [{:_id (str id)} nil]
       [nil {:message "Could not delete user" :status 500}])))
