@@ -82,8 +82,19 @@
       (persistence/update-user db id (merge result {:name (:name data)})))))
 
 (defn delete [db id {email :email password :password}]
-  (let [[{actual-password :password actual-id :id} error] (persistence/get-user-by-email db email)]
-    (cond
-      error [nil error]
-      (not (= id actual-id)) [nil {:message "You can't delete other peoples accounts" :status 400}]
-      :else (check-login actual-password password (persistence/delete-user db id)))))
+  (cond
+    (nil? email) [nil {:message "E-mail is missing in body" :status 400}]
+    (empty? email) [nil {:message "E-mail is empty string in body" :status 400}]
+    (nil? password) [nil {:message "Password is missing in body" :status 400}]
+    (empty? password) [nil {:message "Password is empty string in body" :status 400}]
+    :else (let [[{actual-password :password actual-id :_id} error] (persistence/get-user-by-email db email)]
+            (cond
+              error [nil error]
+              (not (= id (str actual-id))) [nil {:message "You can't delete other peoples accounts" :status 400}]
+              :else (check-login
+                     actual-password
+                     password
+                     (let [[_ error] (persistence/delete-endpoints-by-userId db id)]
+                       (if error
+                         error
+                         (persistence/delete-user db id))))))))
