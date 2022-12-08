@@ -104,15 +104,18 @@
 (defn delete-data-by-id [config user endpoint id]
   {:pre [(is-persistence? config)]
    :post [(is-response? %)]}
-  (if (res/acknowledged?
-       (mc/update
-        (mg/get-db (:conn config) (:db config))
-        "endpoints"
-        {:userId (ObjectId. user)
-         :name endpoint}
-        {$unset {(str "data." id) 1}}))
-    [{:id id} nil]
-    [nil {:message (str "Could not delete item with id " id) :status 500}]))
+  (let [result
+        (mc/update
+         (mg/get-db (:conn config) (:db config))
+         "endpoints"
+         {:userId (ObjectId. user)
+          :name endpoint}
+         {$unset {(str "data." id) 1}})]
+    (if (and (res/acknowledged? result)
+             (res/updated-existing? result)
+             (> 0 (res/affected-count result)))
+      [{:id id} nil]
+      [nil {:message (str "Item with id " id " does not exist") :status 404}])))
 
 (defn update-data-by-id [config user endpoint id new-data]
   {:pre [(is-persistence? config)]
