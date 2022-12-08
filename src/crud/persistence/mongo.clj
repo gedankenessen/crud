@@ -1,5 +1,6 @@
 (ns crud.persistence.mongo
-  (:require [crud.persistence.protocol :refer [Persistence is-persistence? is-response?]]
+  (:require [clojure.set :refer [rename-keys]]
+            [crud.persistence.protocol :refer [Persistence is-persistence? is-response?]]
             [monger.core :as mg]
             [monger.collection :as mc]
             [monger.result :as res]
@@ -56,17 +57,19 @@
   {:pre [(is-persistence? config)]
    :post [(is-response? %)]}
   [(update
-    (select-keys
-     (mc/insert-and-return
-      (mg/get-db (:conn config) (:db config))
-      "endpoints"
-      {:userId (ObjectId. user)
-       :name endpoint
-       :timestamp (quot (System/currentTimeMillis) 1000)
-       :methods []
-       :data (assoc {} (str (ObjectId.)) data)})
-     [:_id :name])
-    :_id
+    (rename-keys
+     (select-keys
+      (mc/insert-and-return
+       (mg/get-db (:conn config) (:db config))
+       "endpoints"
+       {:userId (ObjectId. user)
+        :name endpoint
+        :timestamp (quot (System/currentTimeMillis) 1000)
+        :methods []
+        :data (assoc {} (str (ObjectId.)) data)})
+      [:_id :name])
+     {:_id :id})
+    :id
     #(when % (str %)))
    nil])
 
