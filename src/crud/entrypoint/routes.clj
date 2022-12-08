@@ -19,25 +19,25 @@
   "Routes for user (token) related actions. Requires authorization header."
   (wrap-routes
    (context
-    "/user" {userId :token}
-    (GET "/" [] (fn [_] (user/details db userId)))
-    (PUT "/" [] (fn [{body :body}] (user/details db userId body)))
-    (DELETE "/" [] (fn [{body :body}] (user/delete db userId body)))
-    (POST "/token" [] (fn [{body :body}] (sign-token (:id body) config))))
+    "/user" []
+    (GET "/" [] (fn [{userId :token}] (user/details db userId)))
+    (PUT "/" [] (fn [{userId :token body :body}] (user/details db userId body)))
+    (DELETE "/" [] (fn [{userId :token body :body}] (user/delete db userId body)))
+    (POST "/token" [] (fn [{userId :token body :body}] (sign-token (:id body) config))))
    wrap-authorization))
 
 (defroutes meta-routes
   "Meta routes to work with the endpoints themselves. Requires authorization header."
   (wrap-routes
    (context
-    "/meta" {userId :token}
-    (GET "/" [] (fn [_] (meta/get-endpoints-by-userId db userId)))
-    (DELETE "/" [] (fn [_] (meta/delete-endpoints-by-userId db userId)))
+    "/meta" []
+    (GET "/" [] (fn [{userId :token}] (meta/get-endpoints-by-userId db userId)))
+    (DELETE "/" [] (fn [{userId :token}] (meta/delete-endpoints-by-userId db userId)))
     (context
      "/:id" [endpointId]
-     (DELETE "/" [] (fn [_] (meta/delete-endpoint-by-id db userId endpointId)))
-     (GET "/" [] (fn [_] (meta/get-endpoint-by-id db userId endpointId)))
-     (PUT "/" [] (fn [{body :body}] (meta/update-endpoint-by-id db userId endpointId body)))))
+     (DELETE "/" [] (fn [{userId :token}] (meta/delete-endpoint-by-id db userId endpointId)))
+     (GET "/" [] (fn [{userId :token}] (meta/get-endpoint-by-id db userId endpointId)))
+     (PUT "/" [] (fn [{userId :token body :body}] (meta/update-endpoint-by-id db userId endpointId body)))))
    wrap-authorization))
 
 ;; TODO: Refactor from `/endpoints` to `/build` or `/crud` ?
