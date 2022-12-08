@@ -46,7 +46,6 @@
   "Check if the content type is set to `application/json` on :post and :put request."
   [handler]
   (fn [req]
-    (println req)
     (let [method (-> req :request-method)
           type (-> req :headers :content-type)]
       (if (and (or (= method :post) (= method :put))
