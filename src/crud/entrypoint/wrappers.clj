@@ -16,15 +16,15 @@
     (try
       (handler req)
       (catch IllegalArgumentException _
-        (status {:body {:message "Malformed token"}} 403))
+        (status {:body "Malformed token"} 403))
       (catch MongoException _
-        (status {:body {:message "Something went wrong"}} 500)))))
+        (status {:body "Something went wrong"} 500)))))
 
 (defn wrap-authorization [handler]
   (fn [req]
     (let [[{token :userId} error] (unsign-token (-> req :headers :authorization))]
       (if error
-        (status {:body {:message (:message error)}} (:status error))
+        (status {:body (:message error)} (:status error))
         (handler (assoc req :token token))))))
 
 (defn wrap-keywords
@@ -45,12 +45,12 @@
 (def wrappers
   #(-> %
        wrap-database
-       wrap-json-response
        wrap-keywords
        wrap-json-body
        wrap-cors
        wrap-defaults
-       wrap-content-type))
+       wrap-content-type
+       wrap-json-response))
 
 (extend-protocol Renderable
   clojure.lang.PersistentVector
@@ -58,5 +58,5 @@
     [[data {message :message status :status}] _]
     (if (and (not message) (not status))
       (outgoing/response data)
-      (outgoing/status {:body {:message message}} status))))
+      (outgoing/status {:body message} status))))
 
