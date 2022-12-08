@@ -71,7 +71,7 @@
 (defn details [db id]
   (let [[result error] (persistence/get-user-by-id db id)]
     (if result
-      [(dissoc (dissoc result :password) :email) nil]
+      [(dissoc result :password :email :salt) nil]
       [nil error])))
 
 (defn change [db id data]
