@@ -30,10 +30,14 @@
   "Meta routes to work with the endpoints themselves. Requires authorization header."
   (wrap-routes
    (context
-    "/meta/:id" [id]
-    (DELETE "/" [] (fn [_] (meta/delete-endpoint db id)))
-    (GET "/" [] (fn [_] (meta/get-endpoint db id)))
-    (PUT "/" [] (fn [{body :body}] (meta/update-endpoint db id body))))
+    "/meta" {userId :token}
+    (GET "/" [] (fn [_] (meta/get-endpoints-by-userId db userId)))
+    (DELETE "/" [] (fn [_] (meta/delete-endpoints-by-userId db userId)))
+    (context
+     "/:id" [endpointId]
+     (DELETE "/" [] (fn [_] (meta/delete-endpoint-by-id db userId endpointId)))
+     (GET "/" [] (fn [_] (meta/get-endpoint-by-id db userId endpointId)))
+     (PUT "/" [] (fn [{body :body}] (meta/update-endpoint-by-id db userId endpointId body)))))
    wrap-authorization))
 
 ;; TODO: Refactor from `/endpoints` to `/build` or `/crud` ?
@@ -41,8 +45,7 @@
   "Business logic routes. Heart of crud. Requires authorization header."
   (wrap-routes
    (context
-    "/endpoints/:endpoint"
-    [endpoint]
+    "/endpoints/:endpoint" [endpoint]
     (GET "/:id" [id] (fn [{user :token}] (logic/on-get-id db user endpoint id)))
     (GET "/" [] (fn [{user :token}] (logic/on-get db user endpoint)))
     (POST "/" [] (fn [{user :token body :body}] (logic/on-post db user endpoint body)))
