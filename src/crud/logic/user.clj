@@ -49,16 +49,24 @@
       (or (nil? name) (empty? name)) [nil {:message "Name is missing" :status 400}]
       (or (nil? password) (empty? password)) [nil {:message "Password is missing" :status 400}]
       ;; TODO: Check password strength
-      :else (persistence/add-user db {:email (lower-case email) :password (encrypt-password password salt) :salt (str salt) :name name :membership :free :status :unconfirmed}))))
+      :else
+      (persistence/add-user
+       db
+       {:email (lower-case email)
+        :password (encrypt-password password salt)
+        :salt (str salt)
+        :name name
+        :membership :free
+        :status :unconfirmed}))))
 
 (defn login [db {email :email password :password}]
   (cond
     (not email) [nil {:message "Email is missing" :status 400}]
     (empty email) [nil {:message "Email is an empty string" :status 400}]
-    :else (let [[{encrypted :password salt :salt id :id} error] (persistence/get-user-by-email db (lower-case email))]
+    :else (let [[{encrypted :password salt :salt id :_id} error] (persistence/get-user-by-email db (lower-case email))]
             (if error
               [nil error]
-              (check-login password encrypted salt (sign-token id))))))
+              (check-login password encrypted salt (sign-token (str id)))))))
 
 (defn details [db id]
   (let [[result error] (persistence/get-user-by-id db id)]
@@ -79,6 +87,3 @@
       error [nil error]
       (not (= id actual-id)) [nil {:message "You can't delete other peoples accounts" :status 400}]
       :else (check-login actual-password password (persistence/delete-user db id)))))
-
-
-

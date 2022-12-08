@@ -44,14 +44,13 @@
    :post [(is-response? %)]}
   [(first
     (map
-     (fn [[k v]] (assoc v :_id (name k)))
+     (fn [[_ v]] v)
      (:data
       (mc/find-one-as-map
        (mg/get-db (:conn config) (:db config))
        "endpoints"
-       {:userId (ObjectId. user)
-        :name endpoint}
-       ["data"]))))
+       {:name endpoint
+        :userId (ObjectId. user)}))))
    nil])
 
 (defn add-endpoint [config user endpoint data]
