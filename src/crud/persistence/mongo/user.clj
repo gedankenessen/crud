@@ -10,11 +10,11 @@
 (defn get-user-by-email [config email]
   {:pre [(is-persistence? config)]
    :post [(is-response? %)]}
-  (if-let [result (first
-                   (mc/find-maps
-                    (mg/get-db (:conn config) (:db config))
-                    "users"
-                    {:email email}))]
+  (if-let [result
+           (mc/find-one-as-map
+            (mg/get-db (:conn config) (:db config))
+            "users"
+            {:email email})]
     [result nil]
     [nil {:message (str "Could not find user with email " email) :status 404}]))
 
