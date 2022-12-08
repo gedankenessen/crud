@@ -4,41 +4,7 @@
             [buddy.core.nonce :as nonce]
             [crud.entrypoint.tokens :refer [sign-token config]]
             [crud.persistence.protocol :refer [Persistence is-persistence? is-response?] :as persistence]
-            [crud.entrypoint.tokens :refer [sign-token]]))
-
-(def password-config
-  {:secret "secret"
-   :min-length 8
-   :max-length 32
-   :alg :bcrypt+blake2b-512})
-
-(defn encrypt-password
-  ([password salt]
-   (encrypt-password password salt config))
-  ([password salt config]
-   (hashers/derive password (assoc config :salt salt))))
-
-(defn check-password
-  ([raw encrypted salt]
-   (check-password raw encrypted salt config))
-  ([raw encrypted salt config]
-   (hashers/check raw encrypted (assoc config :salt salt))))
-
-(defn check-login
-  ([given encrypted salt]
-   (check-login given encrypted salt [true nil]))
-  ([given encrypted salt response]
-   (try
-     (cond
-       (not given) [nil {:message "Password is missing" :status 400}]
-       (empty? given) [nil {:message "Password is an empty string" :status 400}]
-       (or (not encrypted)
-           (empty? encrypted)) [nil {:message "Something went wrong" :status 500}]
-       (check-password given encrypted salt) response
-       :else [nil {:message "Email or password are not correct" :status 400}])
-     ;; Catch hashing exceptions
-     (catch Exception _
-       [nil {:message "Something went wrong" :status 500}]))))
+            [crud.logic.cred :refer :all]))
 
 (defn register [db {email :email password :password name :name}]
   (let [[_ error] (persistence/get-user-by-email db email)

@@ -29,7 +29,13 @@
   (delete-endpoints-by-userId [db userId] (delete-endpoints-by-userId db userId))
   (update-endpoint-by-id [db userId endpointId new-data] (update-endpoint-by-id db userId endpointId new-data)))
 
-(def conn (delay (mg/connect)))
-(def config {:conn @conn :db "crud-testing"})
-(def db (map->Mongo-Driver config))
+(def config {:port 27017
+             :host "127.0.0.1"
+             :db "crud-testing"})
+
+(defn get-connection [config]
+  (mg/connect config))
+
+(def db
+  (map->Mongo-Driver (merge {:conn (get-connection config)} config)))
 

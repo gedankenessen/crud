@@ -7,22 +7,28 @@
             [crud.entrypoint.routes :refer :all]
             [crud.entrypoint.wrappers :refer [wrappers wrap-authorization]]))
 
-(defroutes app-routes
-  (wrappers
-   (routes
-    user-routes
-    signup-routes
-    meta-routes
-    crud-routes)))
+(defn build-routes [config]
+  (defroutes app-routes
+    (wrappers
+     (routes
+      (build-user-routes config)
+      (build-sign-up-routes config)
+      (build-meta-routes config)
+      (build-crud-routes config)))))
 
-(def reloaded-app
-  (wrap-reload #'app-routes))
+(defn reloaded-app [config]
+  (wrap-reload #(build-routes config)))
 
-(defn start-server [{port :port  app :app, :or {port 3004 app reloaded-app}}]
-  (println (str "Starting server at http:/127.0.0.1:" port " at: " (System/currentTimeMillis)))
-  (server/run-server app {:port port :legacy-return-value? false}))
+(defn start-server [config]
+  (println
+   (str
+    "Starting server at http:/127.0.0.1:"
+    (-> config :api :port)
+    " at: "
+    (System/currentTimeMillis)))
+  (server/run-server
+   (if (= :prod (-> config :api :env))
+     (build-routes config)
+     (reloaded-app config))
+   {:port (-> config :api :port) :legacy-return-value? false}))
 
-(comment
-  (def server (atom (start-server {:port 3004})))
-  @server
-  (server/server-stop! @server))
