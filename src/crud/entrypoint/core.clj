@@ -4,17 +4,19 @@
             [compojure.route :as route]
             [ring.util.response :refer [response status] :as outgoing]
             [ring.middleware.reload :refer [wrap-reload]]
+            [crud.persistence.protocol :as persistence]
             [crud.entrypoint.routes :refer :all]
             [crud.entrypoint.wrappers :refer [wrappers wrap-authorization]]))
 
 (defn build-routes [config]
-  (defroutes app-routes
-    (wrappers
-     (routes
-      (build-user-routes config)
-      (build-sign-up-routes config)
-      (build-meta-routes config)
-      (build-crud-routes config)))))
+  (let [config (assoc config :db (persistence/connect (:db config)))]
+    (defroutes app-routes
+      (wrappers
+       (routes
+        (build-user-routes config)
+        (build-sign-up-routes config)
+        (build-meta-routes config)
+        (build-crud-routes config))))))
 
 (defn reloaded-app [config]
   (wrap-reload #(build-routes config)))

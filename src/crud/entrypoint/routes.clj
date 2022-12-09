@@ -1,20 +1,19 @@
 (ns crud.entrypoint.routes
   (:require  [compojure.core :refer :all]
              [ring.util.response :refer [response status] :as outgoing]
-             [crud.persistence.mongo.core :refer [db]]
              [crud.entrypoint.tokens :refer [sign-token config]]
              [crud.entrypoint.wrappers :refer [wrap-authorization]]
              [crud.logic.core :as logic]
              [crud.logic.user :as user]
              [crud.logic.meta :as meta]))
 
-(defn build-sign-up-routes [config]
+(defn build-sign-up-routes [{db :db}]
   (defroutes signup-routes
     "Routes for account sign-up. Does not require an authorization header to be present."
     (context
      "/user" {body :body}
-     (POST "/register" [] (fn [_] (user/register (:db config) body)))
-     (POST "/login" [] (fn [_] (user/login (:db config) body))))))
+     (POST "/register" [] (fn [_] (user/register db body)))
+     (POST "/login" [] (fn [_] (user/login db body))))))
 
 (defn build-user-routes [{db :db}]
   (defroutes user-routes

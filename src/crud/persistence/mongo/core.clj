@@ -1,12 +1,30 @@
 (ns crud.persistence.mongo.core
   (:require [monger.core :as mg]
+            [monger.credentials :as mcred]
             [crud.persistence.protocol :refer [Persistence]]
             [crud.persistence.mongo.crud :refer :all]
             [crud.persistence.mongo.user :refer :all]
             [crud.persistence.mongo.meta :refer :all]))
 
-(defrecord Mongo-Driver [config]
+(defn connect
+  "Takes `host`,`post`, `user`, `db` and `pw` from `config` and uses those to append a `conn` to config"
+  [config]
+  (assoc
+   config
+   :conn
+   (mg/connect-with-credentials
+    (:host config)
+    (:port config)
+    (mcred/create
+     (:user config)
+     ;; DO NOT USED `:db` HERE THIS IS ABOUT THE AUTHSTORE!
+     "admin"
+     (:pw config)))))
+
+(defrecord Mongo-Driver [host port db conn]
   Persistence
+  ;; setup
+  (connect [config] (connect config))
   ;; crud functions
   (get-data [config userId endpoint] (get-data config userId endpoint))
   (get-data-by-id [config userId endpoint dataId] (get-data-by-id config userId endpoint dataId))
@@ -29,13 +47,11 @@
   (delete-endpoints-by-userId [db userId] (delete-endpoints-by-userId db userId))
   (update-endpoint-by-id [db userId endpointId new-data] (update-endpoint-by-id db userId endpointId new-data)))
 
-(def config {:port 27017
-             :host "127.0.0.1"
-             :db "crud-testing"})
-
-(defn get-connection [config]
-  (mg/connect config))
-
-(def db
-  (map->Mongo-Driver (merge {:conn (get-connection config)} config)))
-
+(def config
+  (map->Mongo-Driver
+   {:host "localhost"
+    :port 27017
+    :db "crud-testing"
+    :user "root"
+    :pw "example"
+    :conn nil}))

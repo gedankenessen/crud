@@ -3,6 +3,8 @@
 ;; TODO: Look into extend-protocol best practises
 (defprotocol Persistence
   "API for storage (e.g MongoDB)"
+  ;;setup
+  (connect [config] "Setup db connection")
   ;; crud functions
   (get-data [config userId endpoint] "Get all `data` in `/:endpoint` from user with `userId`")
   (get-data-by-id [config userId endpoint dataId] "Get `data` with `dataId` in `/:endpoint` from user with `userId`")
