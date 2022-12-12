@@ -50,8 +50,14 @@
 (def config
   (map->Mongo-Driver
    {:host "localhost"
-    :port 27017
-    :db "crud-testing"
-    :user "root"
-    :pw "example"
+    :port (let [port (System/getenv "CRUD_MONGO_PORT")]
+            (if port
+              (Integer/parseInt port)
+              27017))
+    :db (or (System/getenv "CRUD_MONGO_DB")
+            "crud-testing")
+    :user (or (System/getenv "CRUD_MONGO_USER")
+              "root")
+    :pw (or (System/getenv "CRUD_MONGO_PW")
+            "example")
     :conn nil}))
