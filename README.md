@@ -1,6 +1,69 @@
-# crud - Build your backend with your frontend
+# crud - Prototype your backend with your frontend
 
-This repository contains all the backend services for crud. It's written entirely in Clojure.
+Prototype faster by having crud create your basic CRUD backend. All you need to do is send over JSON - and crud will handle the rest.
+
+<div align="center" >
+  <a href="https://crud.gedankenessen.de">
+    <img width="320" alt="Prototype your backend with your frontend" src="https://repository-images.githubusercontent.com/561455835/b072503c-2e12-4383-9707-9fc1f20bd488">
+  </a>
+</div>
+
+# Usage
+
+`POST` your JSON to the `endpoint` of your:
+
+```
+POST https://crud.gedankenessen.de/users
+{
+  "name": "tom",
+  "theme": "dark",
+  "birthday": "1996-01-01T00:00:00.000Z"
+}
+```
+
+And have crud automatically generate all CRUD operations on that `endpoint`:
+
+```
+/users/{id}
+GET
+GET {id}
+POST {id}
+PUT {id}
+DELETE {id}
+```
+
+If the structure of your data changes, crud automatically wipes the database:
+
+```
+POST https://crud.gedankenessen.de/users
+{
+  "name": "jenna",
+  "theme": "light",
+  "birthday": "1996-01-01T00:00:00.000Z",
+  "lastLogin": "2022-03-15T20:01:22.614Z",
+}
+```
+
+```
+GET https://crud.gedankenessen.de/users
+[{
+  "name": "jenna",
+  "theme": "light",
+  "birthday": "1996-01-01T00:00:00.000Z",
+  "lastLogin": "2022-03-15T20:01:22.614Z",
+  "id": "42822af8-0d95-42de-aa7f”,
+},]
+```
+
+# Installation
+
+Checkout the wiki: [crud.gedankenessen.de/wiki](crud.gedankenessen.de/wiki/installation).
+
+# More information
+
+Checkout our landing page for more info [crud.gedankenessen.de](crud.gedankenessen.de)
+
+# Development
 
 ## Requirements
 
@@ -40,28 +103,3 @@ You can run specific tests in your REPL or use lein to run them all with
 ```
 lein test
 ```
-
-## Examples
-
-TODO: FIXME
-
-## Roadmap
-
-TODO: FIXME
-
-## Edgecases
-
-TODO: FIXME
-
-### Bugs
-
-TODO: FIXME
-
-
-<hr/>
-<div align="center" >
-<a href="https://gedankenessen.github.io/crud-landing/">
-<img width="640" alt="card" src="https://user-images.githubusercontent.com/24259317/202017966-83501535-4b8a-40cd-ae79-ac5e5f8d1d41.png">
-</a>
-</div>
-
