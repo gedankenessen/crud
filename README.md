@@ -57,11 +57,11 @@ GET https://crud.gedankenessen.de/users
 
 # Installation
 
-Checkout the wiki: [crud.gedankenessen.de/wiki](crud.gedankenessen.de/wiki/installation).
+Checkout the wiki: [crud.gedankenessen.de/wiki](https://crud.gedankenessen.de/wiki/installation).
 
 # More information
 
-Checkout our landing page for more info [crud.gedankenessen.de](crud.gedankenessen.de)
+Checkout [crud.gedankenessen.de](https://crud.gedankenessen.de) for more information.
 
 # Development
 
