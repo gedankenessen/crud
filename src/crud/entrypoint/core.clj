@@ -9,6 +9,7 @@
             [crud.entrypoint.wrappers :refer [wrappers wrap-authorization]]))
 
 (defn build-routes [config]
+  ;; Connect to db on start of API
   (let [config (assoc config :db (persistence/connect (:db config)))]
     (defroutes app-routes
       (wrappers
@@ -19,15 +20,18 @@
         (build-crud-routes config))))))
 
 (defn reloaded-app [config]
-  (wrap-reload #(build-routes config)))
+  (wrap-reload (fn [] build-routes config)))
 
 (defn start-server [config]
   (println
    (str
-    "Starting server at http:/127.0.0.1:"
+    "Starting server at "
+    (-> config :api :host)
+    ":"
     (-> config :api :port)
-    " at: "
-    (System/currentTimeMillis)))
+    " (" (System/currentTimeMillis) ")"
+    ))
+  (println config)
   (server/run-server
    (if (= :prod (-> config :api :env))
      (build-routes config)

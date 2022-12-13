@@ -13,9 +13,10 @@
     (context
      "/user" {body :body}
      (POST "/register" [] (fn [_] (user/register db body)))
-     (POST "/login" [] (fn [_] (user/login db body))))))
+     (POST "/login" [] (fn [_] (user/login db body)))
+     (POST "/echo" [] (fn [_] (println db))))))
 
-(defn build-user-routes [{db :db}]
+(defn build-user-routes [{db :db token :token}]
   (defroutes user-routes
     "Routes for user (token) related actions. Requires authorization header."
     (wrap-routes
@@ -25,9 +26,9 @@
       (PUT "/" [] (fn [{userId :token body :body}] (user/details db userId body)))
       (DELETE "/" [] (fn [{userId :token body :body}] (user/delete db userId body)))
       (POST "/token" [] (fn [{userId :token body :body}] (sign-token (:id body) config))))
-     wrap-authorization)))
+     #(wrap-authorization % token))))
 
-(defn build-meta-routes [{db :db}]
+(defn build-meta-routes [{db :db token :token}]
   (defroutes meta-routes
     "Meta routes to work with the endpoints themselves. Requires authorization header."
     (wrap-routes
@@ -40,10 +41,10 @@
        (DELETE "/" [] (fn [{userId :token}] (meta/delete-endpoint-by-id db userId endpointId)))
        (GET "/" [] (fn [{userId :token}] (meta/get-endpoint-by-id db userId endpointId)))
        (PUT "/" [] (fn [{userId :token body :body}] (meta/update-endpoint-by-id db userId endpointId body)))))
-     wrap-authorization)))
+     #(wrap-authorization % token))))
 
 ;; TODO: Refactor from `/endpoints` to `/build` or `/crud` ?
-(defn build-crud-routes [{db :db}]
+(defn build-crud-routes [{db :db token :token}]
   (defroutes crud-routes
     "Business logic routes. Heart of crud. Requires authorization header."
     (wrap-routes
@@ -54,4 +55,4 @@
       (POST "/" [] (fn [{user :token body :body}] (logic/on-post db user endpoint body)))
       (PUT "/:id" [id] (fn [{user :token body :body}] (logic/on-put db user endpoint id body)))
       (DELETE "/:id" [id] (fn [{user :token body :body}] (logic/on-delete-by-id db user endpoint id))))
-     wrap-authorization)))
+     #(wrap-authorization % token))))

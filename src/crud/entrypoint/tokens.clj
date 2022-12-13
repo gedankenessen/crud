@@ -1,10 +1,28 @@
 (ns crud.entrypoint.tokens
-  (:require [buddy.sign.jwt :as jwt]))
+  (:require [buddy.sign.jwt :as jwt]
+            [crud.utility :refer [build-config]]))
 
-;; TODO: Read-in from env-var
 (def config
   {:secret "secret"
    :version 0})
+
+(def relevent-keys [:secret :version])
+
+(defn get-args-config
+  [{secret :crud-token-secret
+    version :crud-token-version}]
+  {:secret secret :version version})
+
+(defn get-env-config []
+  {:secret (System/getenv "CRUD_TOKEN_SECRET")
+   :version (System/getenv "CRUD_TOKEN_VERSION")})
+
+(defn get-config [args]
+  (build-config
+   relevent-keys
+   config
+   (get-env-config)
+   (get-args-config args)))
 
 ;; TODO: Wrap with try-catch!
 ;; TODO: Defaults to hs256, is this good enough?

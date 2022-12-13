@@ -18,7 +18,7 @@
     (mcred/create
      (:user config)
      ;; DO NOT USED `:db` HERE THIS IS ABOUT THE AUTHSTORE!
-     "admin"
+     (:auth-db config)
      (:pw config)))))
 
 (defrecord Mongo-Driver [host port db conn]
@@ -46,18 +46,3 @@
   (delete-endpoint-by-id [db userId endpointId] (delete-endpoint-by-id db userId endpointId))
   (delete-endpoints-by-userId [db userId] (delete-endpoints-by-userId db userId))
   (update-endpoint-by-id [db userId endpointId new-data] (update-endpoint-by-id db userId endpointId new-data)))
-
-(def config
-  (map->Mongo-Driver
-   {:host "localhost"
-    :port (let [port (System/getenv "CRUD_MONGO_PORT")]
-            (if port
-              (Integer/parseInt port)
-              27017))
-    :db (or (System/getenv "CRUD_MONGO_DB")
-            "crud-testing")
-    :user (or (System/getenv "CRUD_MONGO_USER")
-              "root")
-    :pw (or (System/getenv "CRUD_MONGO_PW")
-            "example")
-    :conn nil}))

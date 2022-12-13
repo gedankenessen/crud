@@ -22,9 +22,9 @@
       (catch MongoException _
         (status {:body "Something went wrong"} 500)))))
 
-(defn wrap-authorization [handler]
+(defn wrap-authorization [handler config]
   (fn [req]
-    (let [[{token :userId} error] (unsign-token (-> req :headers :authorization))]
+    (let [[{token :userId} error] (unsign-token (-> req :headers :authorization) config)]
       (if error
         (status {:body (:message error)} (:status error))
         (handler (assoc req :token token))))))
