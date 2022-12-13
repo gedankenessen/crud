@@ -17,6 +17,10 @@
     :parse-fn #(str %)]
    ["-mport" "--mongo-port PORT" "DB port"
     :parse-fn #(Integer/parseInt %)]
+   ["-mauth?" "--mongo-should-auth BOOLEAN" "Should crud auth with db?"
+    :parse-fn #(read-string %)]
+   ["-mauthdb" "--mongo-auth-db STRING" "Auth DB"
+    :parse-fn #(read-string %)]
    ["-cport" "--crud-port PORT" "CRUD port"
     :parse-fn #(Integer/parseInt %)]
    ["-chost" "--crud-host HOST" "CRUD host"
@@ -27,8 +31,6 @@
     :parse-fn #(str %)]
    ["-cversion" "--crud-token-version version" "Token version"
     :parse-fn #(Integer/parseInt %)]
-   ["-cauth" "--crud-should-auth BOOLEAN" "Should crud auth with db?"
-    :parse-fn #(read-string %)]
    ["-h" "--help"]])
 
 (defn -main [& args]
