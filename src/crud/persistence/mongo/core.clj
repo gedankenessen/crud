@@ -8,18 +8,15 @@
 
 (defn connect
   "Takes `host`,`post`, `user`, `db` and `pw` from `config` and uses those to append a `conn` to config"
-  [config]
+  [{host :host port :port user :user pw :pw auth-db :auth-db should-auth? :should-auth :as config}]
   (assoc
    config
    :conn
-   (mg/connect-with-credentials
-    (:host config)
-    (:port config)
-    (mcred/create
-     (:user config)
-     ;; DO NOT USED `:db` HERE THIS IS ABOUT THE AUTHSTORE!
-     (:auth-db config)
-     (:pw config)))))
+   (if should-auth?
+     (mg/connect-with-credentials
+      host port
+      (mcred/create user auth-db  pw))
+     (mg/connect {:host host :port port}))))
 
 (defrecord Mongo-Driver [host port db conn]
   Persistence
