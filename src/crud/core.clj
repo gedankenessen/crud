@@ -27,8 +27,9 @@
     :parse-fn #(str %)]
    ["-cversion" "--crud-token-version version" "Token version"
     :parse-fn #(Integer/parseInt %)]
+   ["-cauth" "--crud-should-auth BOOLEAN" "Should crud auth with db?"
+    :parse-fn #(read-string %)]
    ["-h" "--help"]])
 
 (defn -main [& args]
   (start-server (get-config (:options (parse-opts args cli-options)))))
-
