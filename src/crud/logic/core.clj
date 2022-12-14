@@ -1,11 +1,7 @@
 (ns crud.logic.core
-  (:require [crud.persistence.protocol :refer [Persistence is-persistence? is-response?] :as persistence]))
-
-(defn endpoint-changed?
-  "Check if keys of `data` have changed"
-  [old-data new-data]
-  ;; TODO: Walk nested maps, too!
-  (not (= (set (keys old-data)) (set (keys new-data)))))
+  (:require
+   [crud.persistence.protocol :refer [Persistence is-persistence? is-response?] :as persistence]
+   [crud.logic.change :refer [has-changed?]]))
 
 (defn on-get [db userId endpoint]
   {:pre [(is-persistence? db)]
@@ -26,7 +22,7 @@
       (#(cond
           (nil? %)
           (persistence/add-endpoint db userId endpoint new-data)
-          (endpoint-changed? % new-data)
+          (has-changed? % new-data)
           (persistence/add-version db userId endpoint new-data)
           :else (persistence/add-data db userId endpoint new-data)))))
 
