@@ -1,4 +1,4 @@
-# crud - Prototype your backend with your frontend
+# crud - Prototype your frontend with your backend
 
 Prototype faster by having crud create your basic CRUD backend. All you need to do is send over JSON - and crud will handle the rest.
 
