@@ -1,4 +1,4 @@
-(defproject crud "1.0.0-SNAPSHOT"
+(defproject crud "1.1.0-SNAPSHOT"
   :description "Backend Service for crud - Prototype your backend from your frontend"
   :url "https://crud.gedankenessen.de/"
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
