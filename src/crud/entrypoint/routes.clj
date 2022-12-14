@@ -43,13 +43,12 @@
        (PUT "/" [] (fn [{userId :token body :body}] (meta/update-endpoint-by-id db userId endpointId body)))))
      #(wrap-authorization % token))))
 
-;; TODO: Refactor from `/endpoints` to `/build` or `/crud` ?
 (defn build-crud-routes [{db :db token :token}]
   (defroutes crud-routes
     "Business logic routes. Heart of crud. Requires authorization header."
     (wrap-routes
      (context
-      "/endpoints/:endpoint" [endpoint]
+      "/build/:endpoint" [endpoint]
       (GET "/:id" [id] (fn [{user :token}] (logic/on-get-id db user endpoint id)))
       (GET "/" [] (fn [{user :token}] (logic/on-get db user endpoint)))
       (POST "/" [] (fn [{user :token body :body}] (logic/on-post db user endpoint body)))
