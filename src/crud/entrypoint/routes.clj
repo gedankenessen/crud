@@ -13,8 +13,7 @@
     (context
      "/user" {body :body}
      (POST "/register" [] (fn [_] (user/register db body)))
-     (POST "/login" [] (fn [_] (user/login db body)))
-     (POST "/echo" [] (fn [_] (println db))))))
+     (POST "/login" [] (fn [_] (user/login db body))))))
 
 (defn build-user-routes [{db :db token :token}]
   (defroutes user-routes
