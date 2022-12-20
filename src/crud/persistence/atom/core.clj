@@ -1,7 +1,8 @@
 (ns crud.persistence.atom.core
   (:require [crud.persistence.protocol :refer [Persistence]]
             [crud.persistence.atom.crud :refer :all]
-            [crud.persistence.atom.user :refer :all]))
+            [crud.persistence.atom.user :refer :all]
+            [crud.persistence.atom.meta :refer :all]))
 
 (defrecord Atom-Driver [atom]
   Persistence
@@ -23,4 +24,8 @@
   (update-user [db userId data] (update-user (update-user db userId data)))
   (delete-user [db userId] (delete-user db userId))
   ;; meta functions
-  )
+  (get-endpoints [db userId] (get-endpoints db userId))
+  (get-endpoint-by-id [db userId endpointId] (get-endpoint-by-id db userId endpointId))
+  (delete-endpoint-by-id [db userId endpointId] (delete-endpoint-by-id db userId endpointId))
+  (delete-endpoints-by-userId [db userId] (delete-endpoints-by-userId db userId))
+  (update-endpoint-by-id [db userId endpointId data] (update-endpoint-by-id db userId endpointId data)))

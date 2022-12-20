@@ -32,7 +32,7 @@
           :userId (ObjectId. userId)})]
     (if (res/acknowledged? result)
       [{:_id endpointId} nil]
-      [nil {:message (str "Endpoint with id " endpointId " does not exist for user " userId) :status 404}])))
+      [nil {:message (str "Endpoint with id " endpointId " does not exist") :status 404}])))
 
 (defn delete-endpoints-by-userId [config userId]
   ;; Using `do` here because this action only has a "success" case
