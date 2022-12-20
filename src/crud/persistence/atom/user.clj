@@ -1,16 +1,38 @@
-(ns crud.persistence.atom.user)
+(ns crud.persistence.atom.user
+  (:require [crud.persistence.atom.utility :refer [fresh-uuid!]]))
 
 (defn get-user-by-email [atom email]
-  [nil {:message (str "Could not find user with email " email) :status 404}])
+  (if-let
+      [result
+       (first
+        (map
+         (fn [[k v]] (assoc v :_id k))
+         (filter
+          (fn [[k v]] (= email (:email v)))
+          (:users @atom))))]
+    [result nil]
+    [nil {:message (str "Could not find user with email " email) :status 404}]))
 
 (defn get-user-by-id [atom id]
-  [nil {:message (str "Could not find user with id " id) :status 404}])
+  (if-let [result (get-in @atom [:users id])]
+    [(assoc result :_id id) nil]
+    [nil {:message (str "Could not find user with id " id) :status 404}]))
 
 (defn add-user [atom data]
-  [nil {:message "Could not add user" :status 500}])
+  (let [user-id (fresh-uuid!)]
+    (swap! atom assoc-in [:users user-id] data)
+    [{:id user-id} nil]))
 
 (defn update-user [atom id data]
-  [nil {:message "Could not update user" :status 500}])
+  (if (get-in @atom [:users id])
+    (do
+      (swap! atom assoc-in [:users id] data)
+      [{:id id} nil])
+    [nil {:message (str "User with id " id " does not exist") :status 404}]))
 
-(defn delete-user [atom id data]
-  [nil {:message "Could not delete user" :status 500}])
+(defn delete-user [atom id]
+  (if (get-in @atom [:users id])
+    (do
+      (swap! atom update-in [:users] dissoc id)
+      [{:id id} nil])
+    [nil {:message (str "User with id " id " does not exist") :status 404}]))

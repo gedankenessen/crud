@@ -74,7 +74,8 @@
       {(nth ids 3) demo-data-1}}}}})
 
 (def storage-multi-entry
-  {:users {(first ids) demo-user-1}
+  {:users {(first ids) demo-user-1
+           (nth ids 10) demo-user-2}
    :endpoints
    {(first ids)
     {(second endpoint-names)

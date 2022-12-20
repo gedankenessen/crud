@@ -1,11 +1,5 @@
-(ns crud.persistence.atom.crud)
-
-(defn fresh-uuid! []
-  (keyword (str (java.util.UUID/randomUUID))))
-
-(defn fresh-timestamp! []
-  (System/currentTimeMillis))
-
+(ns crud.persistence.atom.crud
+  (:require [crud.persistence.atom.utility :refer [fresh-timestamp! fresh-uuid!]]))
 
 (defn get-data [atom user endpoint]
   (if-let [result (get-in @atom [:endpoints user endpoint :data])]

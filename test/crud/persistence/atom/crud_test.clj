@@ -2,8 +2,7 @@
   (:require
    [clojure.test :refer [deftest is]]
    [crud.persistence.atom.setups :refer :all]
-   [crud.persistence.atom.crud :as atom]
-   [clojure.pprint :refer :all]))
+   [crud.persistence.atom.crud :as atom]))
 
 (deftest get-data-single-entry
   (let [atom (atom storage-single-entry)
