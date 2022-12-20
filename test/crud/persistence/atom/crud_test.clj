@@ -1,5 +1,5 @@
-(ns crud.atom-test
-  (:require [crud.persistence.atom :as atom]
+(ns crud.persistence.atom.crud-test
+  (:require [crud.persistence.atom.crud :as atom]
             [clojure.test :refer [deftest is]]))
 
 ;; Prepared data to make testing easier
@@ -27,7 +27,8 @@
 (def storage-multi-entry
   {:63691793518fa064ce036c0c
    {:names
-    {:timestamp 1669291439706
+    {:id "64115ebaf3f995fc9512ffad"
+     :timestamp 1669291439706
      :data
      {:637f5e636299384d332bd9e4 {:name "Janet"}
       :637f5e7e38f0162c0da10a8c {:name "Eric"}
@@ -186,7 +187,7 @@
         data {:x 0 :y 0}
         [response error] (atom/add-endpoint atom user endpoint data)
         id (str (:id response))]
-    ;; Action susccessful?
+    ;; Action successful?
     (is (and (not (nil? data)) (nil? error)))
     ;; Id not nil?
     (is (not (nil? id )))
@@ -208,7 +209,7 @@
         data {:message "Testing the endpoint"}
         [response error] (atom/add-endpoint atom user endpoint data)
         id (str (:id response))]
-    ;; Action susccessful?
+    ;; Action successful?
     (is (and (not (nil? data)) (nil? error)))
     ;; Id not nil?
     (is (not (nil? id )))
@@ -230,7 +231,7 @@
         data {:message "Testing the endpoint"}
         [response error] (atom/add-endpoint atom user endpoint data)
         id (str (:id response))]
-    ;; Action susccessful?
+    ;; Action successful?
     (is (and (not (nil? data)) (nil? error)))
     ;; Id not nil?
     (is (not (nil? id )))
@@ -252,7 +253,7 @@
         data {:message "Testing the endpoint"}
         [response error] (atom/add-endpoint atom user endpoint data)
         id (str (:id response))]
-    ;; Action susccessful?
+    ;; Action successful?
     (is (and (not (nil? data)) (nil? error)))
     ;; Id not nil?
     (is (not (nil? id )))
@@ -267,14 +268,14 @@
     ;; Is something in data
     (is (= 1 (count (get-in @atom [(keyword user) (keyword endpoint) :data]))))))
 
-(deftest add-data-success
+(deftest add-data-success-single-entry
   (let [atom (atom storage-single-entry)
         user "63691793518fa064ce036c0c"
         endpoint "numbers"
         data {:x 12 :y 12}
         [response error] (atom/add-data atom user endpoint data)
         id (str (:id response))]
-    ;; Action susccessful?
+    ;; Action successful?
     (is (and (not (nil? data)) (nil? error)))
     ;; Id not nil?
     (is (not (nil? id )))
@@ -289,14 +290,14 @@
     ;; Is something in data
     (is (= 2 (count (get-in @atom [(keyword user) (keyword endpoint) :data]))))))
 
-(deftest add-data-success
-  (let [atom (atom storage-single-entry)
+(deftest add-data-sucess-multi-entry
+  (let [atom (atom storage-multi-entry)
         user "63691793518fa064ce036c0c"
         endpoint "numbers"
-        data {:x 12 :y 12}
+        data {:x 701 :y 401}
         [response error] (atom/add-data atom user endpoint data)
         id (str (:id response))]
-    ;; Action susccessful?
+    ;; Action successful?
     (is (and (not (nil? data)) (nil? error)))
     ;; Id not nil?
     (is (not (nil? id )))
@@ -309,9 +310,283 @@
     ;; Is data in correct format?
     (is (= data (get-in @atom [(keyword user) (keyword endpoint) :data (keyword id)])))
     ;; Is something in data
+    (is (= 4 (count (get-in @atom [(keyword user) (keyword endpoint) :data]))))))
+
+(deftest add-data-empty-storage
+  (let [atom (atom storage-empty)
+        user "63691793518fa064ce036c15"
+        endpoint "numbers"
+        data {:x 701 :y 401}
+        [response error] (atom/add-data atom user endpoint data)]
+    ;; Action unsuccessful?
+    (is (and (not response) error))
+    ;; Storage still empty?
+    (is (= @atom {}))))
+
+(deftest add-data-no-endpoints
+  (let [atom (atom storage-no-endpoints)
+        user "63691793518fa064ce036c15"
+        endpoint "numbers"
+        data {:x 701 :y 401}
+        data-before @atom
+        [response error] (atom/add-data atom user endpoint data)
+        data-after @atom]
+    ;; Action unsuccessful?
+    (is (and (not response) error))
+    ;; Storage still empty?
+    (is (= data-before data-after))))
+
+(deftest add-version-single-entry
+  (let [atom (atom storage-single-entry)
+        user "63691793518fa064ce036c0c"
+        endpoint "numbers"
+        data {:foo "bar"}
+        [response error] (atom/add-version atom user endpoint data)
+        id (str (:id response))]
+    ;; Action successful?
+    (is (and (not (nil? data)) (nil? error)))
+    ;; Id not nil?
+    (is (not (nil? id )))
+    ;; Is user still there?
+    (is (contains? @atom (keyword user)))
+    ;; Is data in correct format?
+    (is (= data (get-in @atom [(keyword user) (keyword endpoint) :data (keyword id)])))
+    ;; Did old-data get replaced by data?
+    (is (= 1 (count (get-in @atom [(keyword user) (keyword endpoint) :data]))))))
+
+(deftest add-version-multi-entry
+  (let [atom (atom storage-multi-entry)
+        user "63691793518fa064ce036c0c"
+        endpoint "numbers"
+        data {:foo "bar"}
+        [response error] (atom/add-version atom user endpoint data)
+        id (str (:id response))]
+    ;; Action successful?
+    (is (and (not (nil? data)) (nil? error)))
+    ;; Id not nil?
+    (is (not (nil? id )))
+    ;; Is user still there?
+    (is (contains? @atom (keyword user)))
+    ;; Is other endpoint still there?
+    (is (= 2 (count (get-in @atom [(keyword user)]))))
+    ;; Is data in correct format?
+    (is (= data (get-in @atom [(keyword user) (keyword endpoint) :data (keyword id)])))
+    ;; Did old-data get replaced by data?
+    (is (= 1 (count (get-in @atom [(keyword user) (keyword endpoint) :data]))))))
+
+(deftest add-version-empty-storage
+  (let [atom (atom storage-empty)
+        user "63691793518fa064ce036c15"
+        endpoint "numbers"
+        data {:x 701 :y 401}
+        [response error] (atom/add-version atom user endpoint data)]
+    ;; Action unsuccessful?
+    (is (and (not response) error))
+    ;; Storage still empty?
+    (is (= @atom {}))))
+
+(deftest add-version-no-endpoints
+  (let [atom (atom storage-no-endpoints)
+        user "63691793518fa064ce036c15"
+        endpoint "numbers"
+        data {:x 701 :y 401}
+        data-before @atom
+        [response error] (atom/add-version atom user endpoint data)
+        data-after @atom]
+    ;; Action unsuccessful?
+    (is (and (not response) error))
+    ;; Storage still empty?
+    (is (= data-before data-after))))
+
+(deftest delete-data-by-id-success-single-entry
+  (let [atom (atom storage-single-entry)
+        user "63691793518fa064ce036c0c"
+        endpoint "numbers"
+        id "637f5ea5470af2df05c6de4e"
+        [response error] (atom/delete-data-by-id atom user endpoint id)]
+    ;; Action successful?
+    (is (and (not (nil? response)) (nil? error)))
+    ;; Id correct?
+    (is (= (str (:id response)) id))
+    ;; Is user still there?
+    (is (contains? @atom (keyword user)))
+    ;; Is entry deleted?
+    (is (empty? (get-in @atom [(keyword user) (keyword endpoint) :data])))))
+
+(deftest delete-data-by-id-success-multi-entry
+  (let [atom (atom storage-multi-entry)
+        user "63691793518fa064ce036c0c"
+        endpoint "numbers"
+        id "637f5ea8333408d8b57a8f71"
+        [response error] (atom/delete-data-by-id atom user endpoint id)]
+    ;; Action successful?
+    (is (and (not (nil? response)) (nil? error)))
+    ;; Id correct?
+    (is (= (str (:id response)) id))
+    ;; Is user still there?
+    (is (contains? @atom (keyword user)))
+    ;; Is entry deleted?
     (is (= 2 (count (get-in @atom [(keyword user) (keyword endpoint) :data]))))))
 
-;; TODO: Tests add-data
-;; TODO: Tests add-version
-;; TODO: Tests delete-data-by-id
-;; TODO: Tests update-data-by-id
+(deftest delete-data-by-id-non-existent-id
+  (let [atom (atom storage-single-entry)
+        user "63691793518fa064ce036c0c"
+        endpoint "numbers"
+        id "637f5ea5470af2df05c6de15"
+        [response error] (atom/delete-data-by-id atom user endpoint id)]
+    ;; Action successful?
+    (is (and (not (nil? error)) (nil? response)))
+    ;; Is user still there?
+    (is (contains? @atom (keyword user)))
+    ;; Is data still there?
+    (is (= 1 (count (get-in @atom [(keyword user) (keyword endpoint) :data]))))))
+
+(deftest delete-data-by-id-non-existent-user
+  (let [atom (atom storage-single-entry)
+        real-user "63691793518fa064ce036c0c"
+        fake-user "63691793518fa064ce036c15"
+        endpoint "numbers"
+        id "637f5ea5470af2df05c6de4e"
+        [response error] (atom/delete-data-by-id atom fake-user endpoint id)]
+    ;; Action successful?
+    (is (and (not (nil? error)) (nil? response)))
+    ;; Is user still there?
+    (is (contains? @atom (keyword real-user)))
+    ;; Is data still there?
+    (is (= 1 (count (get-in @atom [(keyword real-user) (keyword endpoint) :data]))))))
+
+(deftest delete-data-by-id-non-existent-endpoint
+  (let [atom (atom storage-single-entry)
+        user "63691793518fa064ce036c0c"
+        real-endpoint "numbers"
+        fake-endpoint "xyz"
+        id "637f5ea5470af2df05c6de4e"
+        [response error] (atom/delete-data-by-id atom user fake-endpoint id)]
+    ;; Action successful?
+    (is (and (not (nil? error)) (nil? response)))
+    ;; Is user still there?
+    (is (contains? @atom (keyword user)))
+    ;; Is data still there?
+    (is (= 1 (count (get-in @atom [(keyword user) (keyword real-endpoint) :data]))))))
+
+(deftest delete-data-by-id-empty-storage
+  (let [atom (atom storage-empty)
+        user "63691793518fa064ce036c0c"
+        endpoint "numbers"
+        id "637f5ea5470af2df05c6de4e"
+        [response error] (atom/delete-data-by-id atom user endpoint id)]
+    ;; Action unsuccessful?
+    (is (and (not (nil? error)) (nil? response)))
+    ;; Still empty?
+    (is (= {} @atom))))
+
+(deftest delete-data-by-id-no-endpoints
+  (let [atom (atom storage-no-endpoints)
+        user "63691793518fa064ce036c0c"
+        endpoint "numbers"
+        id "637f5ea5470af2df05c6de4e"
+        data-before @atom
+        [response error] (atom/delete-data-by-id atom user endpoint id)
+        data-after @atom]
+    ;; Action unsuccessful?
+    (is (and (not (nil? error)) (nil? response)))
+    ;; Still empty?
+    (is (= data-before data-after))))
+
+(deftest update-data-by-id-success-single-entry
+  (let [atom (atom storage-single-entry)
+        user "63691793518fa064ce036c0c"
+        endpoint "numbers"
+        id "637f5ea5470af2df05c6de4e"
+        new-data {:x 1 :y 1}
+        data-before (get-in @atom [(keyword user) (keyword endpoint) :data])
+        [response error] (atom/update-data-by-id atom user endpoint id new-data)
+        data-after (get-in @atom [(keyword user) (keyword endpoint) :data])]
+    ;; Action successful?
+    (is (and (not (nil? error)) (nil? response)))
+    ;; Is data still there?
+    (is (= 1 (count data-after)))
+    ;; Is data different?
+    (is (not (= data-before data-after)))
+    ;; Is (new)-data correct?
+    (is (= (get-in data-after [(keyword id)]) new-data))))
+
+(deftest update-data-by-id-success-multi-entry
+  (let [atom (atom storage-multi-entry)
+        user "63691793518fa064ce036c0c"
+        endpoint "numbers"
+        id "637f5ea8333408d8b57a8f71"
+        new-data {:x 1 :y 1}
+        data-before (get-in @atom [(keyword user) (keyword endpoint) :data])
+        [response error] (atom/update-data-by-id atom user endpoint id new-data)
+        data-after (get-in @atom [(keyword user) (keyword endpoint) :data])]
+    ;; Action successful?
+    (is (and (not (nil? error)) (nil? response)))
+    ;; Is data still there?
+    (is (= 3 (count data-after)))
+    ;; Is data different?
+    (is (not (= data-before data-after)))
+    ;; Is (new)-data correct?
+    (is (= (get-in data-after [(keyword id)]) new-data))))
+
+(deftest update-data-by-id-non-existent-id
+  (let [atom (atom storage-single-entry)
+        user "63691793518fa064ce036c0c"
+        endpoint "numbers"
+        id "637f5ea8333408d8b57a8f71"
+        new-data {:x 1 :y 1}
+        data-before (get-in @atom [(keyword user) (keyword endpoint) :data])
+        [response error] (atom/update-data-by-id atom user endpoint id new-data)
+        data-after (get-in @atom [(keyword user) (keyword endpoint) :data])]
+    ;; Action unsuccessful?
+    (is (and (not (nil? error)) (nil? response)))
+    ;; Is data still there?
+    (is (= 1 (count data-after)))
+    ;; Is data different?
+    (is (= data-before data-after))))
+
+(deftest update-data-by-id-non-existent-user
+  (let [atom (atom storage-single-entry)
+        real-user "63691793518fa064ce036c0c"
+        fake-user "63691793518fa064ce036c15"
+        endpoint "numbers"
+        id "637f5ea5470af2df05c6de4e"
+        new-data {:x 1 :y 1}
+        data-before (get-in @atom [(keyword real-user) (keyword endpoint) :data])
+        [response error] (atom/update-data-by-id atom fake-user endpoint id new-data)
+        data-after (get-in @atom [(keyword real-user) (keyword endpoint) :data])]
+    ;; Action unsuccessful?
+    (is (and (not (nil? error)) (nil? response)))
+    ;; Is data still there?
+    (is (= 1 (count data-after)))
+    ;; Is data different?
+    (is (= data-before data-after))))
+
+(deftest update-data-by-id-empty-storage
+  (let [atom (atom storage-empty)
+        user "63691793518fa064ce036c0c"
+        endpoint "numbers"
+        id "637f5ea5470af2df05c6de4e"
+        new-data {:x 1 :y 1}
+        [response error] (atom/update-data-by-id atom user endpoint id new-data)]
+    ;; Action unsuccessful?
+    (is (and (not (nil? error)) (nil? response)))
+    ;; Still empty?
+    (is (= {} @atom))))
+
+(deftest update-data-by-id-no-endpoints
+  (let [atom (atom storage-empty)
+        user "63691793518fa064ce036c0c"
+        endpoint "numbers"
+        id "637f5ea5470af2df05c6de4e"
+        new-data {:x 1 :y 1}
+        data-before @atom
+        [response error] (atom/update-data-by-id atom user endpoint id new-data)
+        data-after @atom]
+    ;; Action unsuccessful?
+    (is (and (not (nil? error)) (nil? response)))
+    ;; Still empty?
+    (is (= data-before data-after))))
+
+
+

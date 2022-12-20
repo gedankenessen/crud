@@ -83,7 +83,7 @@
            :name endpoint}
           {$set {(str "data." id) new-data}}))
       [{:_id id} nil]
-      [nil {:message (str "Could not add endpoint /" endpoint) :status 500}])))
+      [nil {:message (str "Endpoint /" endpoint " does not exist") :status 404}])))
 
 (defn add-version [config user endpoint new-data]
   {:pre [(is-persistence? config)]
@@ -97,7 +97,7 @@
            :name endpoint}
           {$set {:data (assoc {} id new-data)}}))
       [{:_id id} nil]
-      [nil {:message (str "Could not add data to endpoint /" endpoint) :status 500}])))
+      [nil {:message (str "Endpoint /" endpoint " does not exist") :status 404}])))
 
 (defn delete-data-by-id [config user endpoint id]
   {:pre [(is-persistence? config)]
@@ -126,5 +126,5 @@
          :name endpoint}
         {$set {(str "data." id) new-data}}))
     [{:_id id} nil]
-    [nil {:message (str "Could not update item with id " id) :status 500}]))
+    [nil {:message (str "Item with id " id " does not exist") :status 404}]))
 

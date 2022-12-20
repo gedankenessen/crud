@@ -35,30 +35,38 @@
     [{:id id} nil]))
 
 (defn add-data [atom user endpoint new-data]
-  (let [id (ObjectId.)]
-    (swap! atom assoc-in [(keyword user) (keyword endpoint) :data (keyword (str id))] new-data)
-    [{:id id} nil]))
+  (if (get-in @atom [(keyword user) (keyword endpoint)])
+    (let [id (ObjectId.)]
+      (swap! atom assoc-in [(keyword user) (keyword endpoint) :data (keyword (str id))] new-data)
+      [{:id id} nil])
+    [nil {:message (str "Endpoint /" endpoint " does not exist") :status 404}]))
 
 (defn add-version [atom user endpoint new-data]
-  (let [id (ObjectId.)]
-    (swap! atom assoc-in [(keyword user) (keyword endpoint)] {:data (assoc {} (keyword (str id)) new-data)})
-    [{:id id} nil]))
+  (if (get-in @atom [(keyword user) (keyword endpoint)])
+    (let [id (ObjectId.)]
+      (swap! atom assoc-in [(keyword user) (keyword endpoint)] {:data (assoc {} (keyword (str id)) new-data)})
+      [{:id id} nil])
+    [nil {:message (str "Endpoint /" endpoint " does not exist") :status 404}]))
 
 (defn delete-data-by-id [atom user endpoint id]
-  (do
-    (swap!
-     atom
-     update-in
-     [(keyword user) (keyword endpoint) :data]
-     dissoc
-     (keyword id))
-    [{:id id} nil]))
+  (if (get-in @atom [(keyword user) (keyword endpoint) :data (keyword id)])
+    (do
+      (swap!
+       atom
+       update-in
+       [(keyword user) (keyword endpoint) :data]
+       dissoc
+       (keyword id))
+      [{:id id} nil])
+    [nil {:message (str "Item with id " id " does not exist") :status 404}]))
 
 (defn update-data-by-id [atom user endpoint id new-data]
-  (do
-    (swap!
-     atom
-     assoc-in
-     [(keyword user) (keyword endpoint) :data (keyword id)]
-     new-data)
-    [{:id id} nil]))
+  (if (get-in @atom [(keyword user) (keyword endpoint) :data (keyword id)])
+    (do
+      (swap!
+       atom
+       assoc-in
+       [(keyword user) (keyword endpoint) :data (keyword id)]
+       new-data)
+      [{:id id} nil]))
+  [nil {:message (str "Item with id " id " does not exist") :status 404}])
