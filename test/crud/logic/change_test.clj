@@ -1,9 +1,9 @@
 (ns crud.logic.change-test
   (:require
+   [crud.logic.change :refer [has-changed?]]
    [clojure.walk :refer :all]
    [clojure.data :refer :all]
-   [clojure.test :refer :all]
-   [crud.logic.change :refer [has-changed?]]))
+   [clojure.test :refer :all]))
 
 (def product-1 {:name "Table" :color "brown"})
 (def product-2 (assoc product-1 :size "big"))

@@ -1,4 +1,4 @@
-(ns crud.tokens-test
+(ns crud.entrypoint.tokens-test
   (:require [crud.entrypoint.tokens :as tokens]
             [clojure.test :refer [deftest is]]))
 
