@@ -4,7 +4,7 @@
 (defn get-data [db user endpoint]
   (if-let [result (get-in @db [:endpoints (keyword user) (keyword endpoint) :data])]
     [(map (fn [[k v]] (assoc v :_id k)) result) nil]
-    [nil {:message (str "Could not find endpoint /" endpoint) :status 404}]))
+    [[] nil]))
 
 (defn get-data-by-id [db user endpoint id]
   (if-let [result (get-in @db [:endpoints (keyword user) (keyword endpoint) :data id])]
@@ -19,7 +19,7 @@
          (fn [[k v]] (assoc v :_id k))
          (get-in @db [:endpoints (keyword user) (keyword endpoint) :data])))]
     [result nil]
-    [nil {:message (str "Could not find endpoint /" endpoint ".") :status 404}]))
+    [[] nil]))
 
 (defn add-endpoint [db userId endpoint new-data]
   (let [endpoint-id (fresh-uuid!)
