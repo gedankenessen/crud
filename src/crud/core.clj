@@ -31,6 +31,8 @@
     :parse-fn #(str %)]
    ["-cversion" "--crud-token-version version" "Token version"
     :parse-fn #(Integer/parseInt %)]
+   ["-t" "--db-type string" "What kind of database should be used"
+    :parse-fn #(keyword %)]
    ["-h" "--help"]])
 
 (defn -main [& args]

@@ -3,7 +3,7 @@
             [crud.utility :refer [build-config]]))
 
 (def _config
-  "Default config for MongoDB"
+  "Default values for MongoDB"
   {:host "localhost"
    :port 27017
    :db "crud-testing"
@@ -47,7 +47,10 @@
    :auth-db auth-db
    :db db})
 
-(defn get-config [args]
+(defn get-config
+  "Build config from defaults, env-variables and cli arguments"
+  [args]
+  ;; Important to map to Record, so Persistence protocol is working!
   (map->Mongo-Driver
    (build-config
     relevant-keys

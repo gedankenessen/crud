@@ -11,12 +11,12 @@
   {:pre [(is-persistence? config)]
    :post [(is-response? %)]}
   [(map
-    (fn [[k v]] (assoc v :_id (name k)))
+    (fn [[k v]] (assoc v :_id (keyword k)))
     (:data
      (mc/find-one-as-map
       (mg/get-db (:conn config) (:db config))
       "endpoints"
-      {:userId (ObjectId. user)
+      {:userId (ObjectId. (name user))
        :name endpoint}
       ["data"])))
    nil])
@@ -33,8 +33,8 @@
           (mc/find-one-as-map
            (mg/get-db (:conn config) (:db config))
            "endpoints"
-           {:name endpoint
-            :userId (ObjectId. user)}
+           {:name (name endpoint)
+            :userId (ObjectId. (name user))}
            [(str "data." id)]))))]
     [response nil]
     [nil {:message (str "Item with id " id " on endpoint /" endpoint " does not exist") :status 404}]))
@@ -49,8 +49,8 @@
       (mc/find-one-as-map
        (mg/get-db (:conn config) (:db config))
        "endpoints"
-       {:name endpoint
-        :userId (ObjectId. user)}))))
+       {:name (name endpoint)
+        :userId (ObjectId. (name user))}))))
    nil])
 
 (defn add-endpoint [config user endpoint data]
@@ -61,8 +61,8 @@
      (mc/insert-and-return
       (mg/get-db (:conn config) (:db config))
       "endpoints"
-      {:userId (ObjectId. user)
-       :name endpoint
+      {:userId (ObjectId. (name user))
+       :name (name endpoint)
        :timestamp (quot (System/currentTimeMillis) 1000)
        :methods []
        :data (assoc {} (str (ObjectId.)) data)})
@@ -79,8 +79,8 @@
          (mc/update
           (mg/get-db (:conn config) (:db config))
           "endpoints"
-          {:userId (ObjectId. user)
-           :name endpoint}
+          {:userId (ObjectId. (name user))
+           :name (name endpoint)}
           {$set {(str "data." id) new-data}}))
       [{:_id id} nil]
       [nil {:message (str "Endpoint /" endpoint " does not exist") :status 404}])))
@@ -93,8 +93,8 @@
          (mc/update
           (mg/get-db (:conn config) (:db config))
           "endpoints"
-          {:userId (ObjectId. user)
-           :name endpoint}
+          {:userId (ObjectId. (name user))
+           :name (name endpoint)}
           {$set {:data (assoc {} id new-data)}}))
       [{:_id id} nil]
       [nil {:message (str "Endpoint /" endpoint " does not exist") :status 404}])))
@@ -106,12 +106,12 @@
         (mc/update
          (mg/get-db (:conn config) (:db config))
          "endpoints"
-         {:userId (ObjectId. user)
-          :name endpoint}
+         {:userId (ObjectId. (name user))
+          :name (name endpoint)}
          {$unset {(str "data." id) 1}})]
     (if (and (res/acknowledged? result)
              (res/updated-existing? result)
-             (> 0 (res/affected-count result)))
+             (< 0 (res/affected-count result)))
       [{:_id id} nil]
       [nil {:message (str "Item with id " id " does not exist") :status 404}])))
 
@@ -122,8 +122,8 @@
        (mc/update
         (mg/get-db (:conn config) (:db config))
         "endpoints"
-        {:userId (ObjectId. user)
-         :name endpoint}
+        {:userId (ObjectId. (name user))
+         :name (name endpoint)}
         {$set {(str "data." id) new-data}}))
     [{:_id id} nil]
     [nil {:message (str "Item with id " id " does not exist") :status 404}]))
