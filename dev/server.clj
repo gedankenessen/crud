@@ -6,6 +6,6 @@
             [crud.entrypoint.tokens :as tokens]))
 
 (comment
-  (def server (atom (start-server (get-config {}))))
+  (def server (atom (start-server (get-config {:db-type :mongo}))))
   @server
   (server/server-stop! @server))

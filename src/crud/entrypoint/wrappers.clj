@@ -19,7 +19,6 @@
     (try
       (handler req)
       (catch IllegalArgumentException e
-        (println e)
         (status {:body "Malformed token"} 403))
       (catch MongoException _
         (status {:body "Something went wrong"} 500)))))

@@ -12,3 +12,6 @@ build-docker: build-crud
 
 build-crud:
 	lein uberjar
+
+run:
+	java -jar target/default+uberjar/crud-*-SNAPSHOT-standalone.jar
