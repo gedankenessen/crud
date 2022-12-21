@@ -1,5 +1,5 @@
-(ns crud.persistence.atom.config
-  (:require [crud.persistence.atom.core :refer [map->Atom-Driver]]))
+(ns crud.persistence.local.config
+  (:require [crud.persistence.local.core :refer [map->Local-Driver]]))
 
 (def config
   (atom {:users {}
@@ -31,7 +31,7 @@
   ([{default-db :default-db
      default-users :default-users
      default-endpoints :default-endpoints}]
-   (map->Atom-Driver
+   (map->Local-Driver
     {:db
      (or default-db
          (atom {:users (or default-users {})

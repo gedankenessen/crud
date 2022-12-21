@@ -1,4 +1,4 @@
-(ns crud.persistence.atom.setups)
+(ns crud.persistence.local.setups)
 
 (def demo-user-1
   {:name "Tmo"

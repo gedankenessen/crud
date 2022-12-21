@@ -1,4 +1,4 @@
-(ns crud.persistence.atom.meta)
+(ns crud.persistence.local.meta)
 
 (defn get-endpoints [db userId]
   [(map

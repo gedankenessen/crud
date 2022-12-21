@@ -1,10 +1,10 @@
-(ns crud.persistence.atom.core
+(ns crud.persistence.local.core
   (:require [crud.persistence.protocol :refer [Persistence]]
-            [crud.persistence.atom.crud :refer :all]
-            [crud.persistence.atom.user :refer :all]
-            [crud.persistence.atom.meta :refer :all]))
+            [crud.persistence.local.crud :refer :all]
+            [crud.persistence.local.user :refer :all]
+            [crud.persistence.local.meta :refer :all]))
 
-(defrecord Atom-Driver [db]
+(defrecord Local-Driver [db]
   Persistence
   ;; setup
   (connect [db] db)

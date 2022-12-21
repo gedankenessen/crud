@@ -2,7 +2,7 @@
 
 ;; TODO: Look into extend-protocol best practises
 (defprotocol Persistence
-  "API for storage (e.g MongoDB)"
+  "API for storage (e.g MongoDB, local)"
   ;;setup
   (connect [config] "Setup db connection")
   ;; crud functions

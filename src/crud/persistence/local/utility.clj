@@ -1,4 +1,4 @@
-(ns crud.persistence.atom.utility)
+(ns crud.persistence.local.utility)
 
 (defn fresh-uuid! []
   (keyword (str (java.util.UUID/randomUUID))))
