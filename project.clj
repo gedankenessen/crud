@@ -10,6 +10,7 @@
                  [ring "1.9.4"]
                  [ring/ring-defaults "0.3.3"]
                  [ring/ring-json "0.5.1"]
+                 [ring/ring-mock "0.4.0"]
                  [ring-cors "0.1.13"]
                  [http-kit "2.5.3"]
                  [compojure "1.6.2"]
