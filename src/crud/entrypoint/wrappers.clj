@@ -13,6 +13,7 @@
             [cheshire.generate :refer [add-encoder encode-str remove-encoder]])
   (:import com.mongodb.MongoException org.bson.types.ObjectId))
 
+;; TODO: Move to db implementation!
 (defn wrap-database [handler]
   (fn [req]
     (try
@@ -45,7 +46,7 @@
 (def wrap-defaults #(ringd/wrap-defaults % (assoc ringd/api-defaults :security {:anti-forgery false})))
 
 (defn wrap-is-content-type
-  "Check if the content type is set to `application/json` on :post and :put request."
+  "Check if the request `content-type` is set to `application/json` on :post and :put request."
   [handler]
   (fn [req]
     (let [method (-> req :request-method)
@@ -62,9 +63,9 @@
        wrap-keywords
        wrap-json-body
        wrap-cors
+       wrap-json-response
        wrap-defaults
-       wrap-content-type
-       wrap-json-response))
+       wrap-content-type))
 
 ;; Extend Compojure/Renderable to handle internal [data error] tuple.
 (extend-protocol Renderable
@@ -75,5 +76,6 @@
       (outgoing/response data)
       (outgoing/status {:body message} status))))
 
+;; TODO: Find better placement
 ;; Extend Cheshire JSON converter to handle MongoDB IDs
 (add-encoder org.bson.types.ObjectId encode-str)
