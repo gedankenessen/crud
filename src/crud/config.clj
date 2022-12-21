@@ -19,3 +19,10 @@
          :mongo (mongo/get-config args)
          (local/get-config args))
    :token (tokens/get-config args)})
+
+(def cli-options
+  (concat
+   mongo/get-cli-options
+   api/get-cli-options
+   tokens/get-cli-options
+   [["-?" "--help"]]))

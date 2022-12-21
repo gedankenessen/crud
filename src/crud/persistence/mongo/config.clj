@@ -30,6 +30,22 @@
    :auth-db (System/getenv "CRUD_MONGO_AUTH_DB")
    :pw (System/getenv "CRUD_MONGO_PASSWORT")})
 
+(def get-cli-options
+  [["-U" "--mongo-user USER" "MongoDB username"
+    :parse-fn #(str %)]
+   ["-W" "--mongo-password password" "MongoDB password"
+    :parse-fn #(str %)]
+   ["-C" "--mongo-coll DB" "Name of collection that crud should use"
+    :parse-fn #(str %)]
+   ["-L" "--mongo-url URL" "URL that MongoDB is running on"
+    :parse-fn #(str %)]
+   ["-P" "--mongo-port PORT" "The port that MongoDB is running on"
+    :parse-fn #(Integer/parseInt %)]
+   ["-a" "--mongo-should-auth BOOLEAN" "Should crud auth with db?"
+    :parse-fn #(read-string %)]
+   ["-A" "--mongo-auth-db STRING" "Name of auth collection"
+    :parse-fn #(read-string %)]])
+
 (defn get-args-config
   "Maps command-line args to config"
   [{host :mongo-host
@@ -38,7 +54,7 @@
     should-auth? :mongo-should-auth
     pw :mongo-password
     auth-db :mongo-auth-db
-    db :mongo-db}]
+    db :mongo-coll}]
   {:host host
    :port port
    :should-auth should-auth?

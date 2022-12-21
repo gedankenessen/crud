@@ -17,6 +17,12 @@
   {:secret (System/getenv "CRUD_TOKEN_SECRET")
    :version (System/getenv "CRUD_TOKEN_VERSION")})
 
+(def get-cli-options
+  [["-s" "--crud-token-secret SECRET" "Secret used for tokens"
+    :parse-fn #(str %)]
+   ["-S" "--crud-token-version version" "Version used for tokens"
+    :parse-fn #(Integer/parseInt %)]])
+
 (defn get-config [args]
   (build-config
    relevent-keys

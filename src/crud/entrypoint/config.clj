@@ -19,6 +19,16 @@
    :host (System/getenv "CRUD_HOST")
    :env (System/getenv "CRUD_ENV")})
 
+(def get-cli-options
+  [["-p" "--crud-port PORT" "Port that crud should run on"
+    :parse-fn #(Integer/parseInt %)]
+   ["-h" "--crud-host HOST" "Host that crud should run on"
+    :parse-fn #(str %)]
+   ["-e" "--crud-env env" "Whether to run as production or staging"
+    :parse-fn #(keyword %)]
+   ["-t" "--db-type string" "What kind of database should be used (e.g local, MongoDB)"
+    :parse-fn #(keyword %)]])
+
 (defn get-args-config
   "Map from cli argument names to config key names"
   [{port :crud-port host :crud-host env :crud-env}]
