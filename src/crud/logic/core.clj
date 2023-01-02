@@ -20,7 +20,10 @@
     (cond
       (nil? data)
       (persistence/add-endpoint db userId endpoint new-data)
-      (has-changed? (dissoc data :_id) new-data)
+      (has-changed?
+       ;; Remove :_id fields from old data
+       (dissoc data :_id)
+       new-data)
       (persistence/add-version db userId endpoint new-data)
       :else (persistence/add-data db userId endpoint new-data))))
 

@@ -19,7 +19,7 @@
          (fn [[k v]] (assoc v :_id k))
          (get-in @db [:endpoints (keyword user) (keyword endpoint) :data])))]
     [result nil]
-    [[] nil]))
+    [nil nil]))
 
 (defn add-endpoint [db userId endpoint new-data]
   (let [endpoint-id (fresh-uuid!)
