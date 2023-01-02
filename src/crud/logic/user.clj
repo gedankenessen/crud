@@ -32,7 +32,7 @@
     :else (let [[{encrypted :password salt :salt id :_id} error] (persistence/get-user-by-email db (lower-case email))]
             (if error
               [nil error]
-              (check-login password encrypted salt (sign-token (str id)))))))
+              (check-login password encrypted salt (sign-token id))))))
 
 (defn details [db id]
   (let [[result error] (persistence/get-user-by-id db id)]

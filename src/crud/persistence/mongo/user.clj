@@ -15,7 +15,7 @@
             (mg/get-db (:conn config) (:db config))
             "users"
             {:email email})]
-    [result nil]
+    [(assoc result :_id (keyword (str (:_id result)))) nil]
     [nil {:message (str "Could not find user with email " email) :status 404}]))
 
 (defn get-user-by-id [config id]
@@ -26,7 +26,7 @@
                (mg/get-db (:conn config) (:db config))
                "users"
                (ObjectId. id))]
-    [result nil]
+    [(assoc result :userId (keyword (str (:userId result)))) nil]
     [nil {:message (str "Could not find user with id " id) :status 404}]))
 
 (defn add-user [config data]
@@ -38,7 +38,7 @@
                 "users"
                 (assoc data :_id id))]
     (if (res/acknowledged? result)
-      [{:_id (str id)} nil]
+      [{:_id (keyword (str id))} nil]
       [nil {:message "Could not add user" :status 500}])))
 
 (defn update-user [config id data]

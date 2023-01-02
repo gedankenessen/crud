@@ -1,9 +1,9 @@
-(ns crud.tokens-test
+(ns crud.entrypoint.tokens-test
   (:require [crud.entrypoint.tokens :as tokens]
             [clojure.test :refer [deftest is]]))
 
 (def testConfig {:secret "testing" :version 1337})
-(def testUserId "637f5eb6aff995fc95105fbd")
+(def testUserId :637f5eb6aff995fc95105fbd)
 
 (deftest sign-valid-token
   (let [[{token :token} error] (tokens/sign-token testUserId testConfig)]

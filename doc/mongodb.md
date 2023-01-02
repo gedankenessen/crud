@@ -34,33 +34,23 @@ Currently uses two collections:
 
 ```json
 {
+  "_id": {
+	"$oid": "63a34ef3cf7e797569e7dbec"
+  },
   "userId": {
-    "$oid": "63691793518fa064ce036c0c"
+	"$oid": "6392357a6a845062bbc40597"
   },
-  "methods": [
-    "GET",
-    "PUT",
-    "POST",
-    "DELETE"
-  ],
+  "name": "tasks",
   "timestamp": {
-    "$numberLong": "1667921315"
+	"$numberLong": "1671646963"
   },
-  "name": "focus",
+  "methods": [],
   "data": {
-    "636a75a36a263c5cff4da190": {
-      "_id": {
-        "$oid": "636a75a36a263c5cff4da190"
-      },
-      "data": {
-        "x": {
-          "$numberLong": "18"
-        },
-        "y": {
-          "$numberLong": "24"
-        }
-      }
-    }
+	"63a34ef3cf7e797569e7dbeb": {
+	  "prio": "low",
+	  "name": "Change socks",
+	  "deadline": 7
+	}
   }
 }
 ```
@@ -70,9 +60,13 @@ Currently uses two collections:
 ```
 {
   "_id": {
-	"$oid": "63691793518fa064ce036c0c"
+	"$oid": "6392357a6a845062bbc40597"
   },
+  "email": "marlon@gedankenessen.de",
+  "password": "bcrypt+sha512$ba390f6f02f9db2f22b...",
+  "salt": "[B@6201fcad",
   "name": "Marlon",
-  "membership": "pro"
+  "membership": "free",
+  "status": "unconfirmed"
 }
 ```
