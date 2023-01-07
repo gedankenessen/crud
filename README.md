@@ -13,7 +13,7 @@ Prototype faster by having crud create your basic CRUD backend. All you need to 
 `POST` your JSON to the `endpoint` of your:
 
 ```
-POST https://crud.gedankenessen.de/users
+POST 127.0.0.1/build/users
 {
   "name": "tom",
   "theme": "dark",
@@ -35,7 +35,7 @@ DELETE {id}
 If the structure of your data changes, crud automatically wipes the database:
 
 ```
-POST https://crud.gedankenessen.de/users
+POST 127.0.0.1/build/users
 {
   "name": "jenna",
   "theme": "light",
@@ -45,7 +45,7 @@ POST https://crud.gedankenessen.de/users
 ```
 
 ```
-GET https://crud.gedankenessen.de/users
+GET 127.0.0.1/build/users
 [{
   "name": "jenna",
   "theme": "light",
