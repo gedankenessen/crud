@@ -70,7 +70,8 @@ Checkout [crud.gedankenessen.de](https://crud.gedankenessen.de) for more informa
 - JDK 8 (or above)
 - Clojure 1.10
 
-crud uses a MongoDB as it's main database, so it's best to also have a MongoDB v6.0 (earlier should work, too) installed and running.
+If you want your data [to be persistent](https://crud.gedankenessen.de/wiki/installation#about):
+- MongoDB v6.0
 
 ## Installation
 
