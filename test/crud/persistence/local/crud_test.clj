@@ -29,8 +29,8 @@
         user (first ids)
         endpoint (first endpoint-names)
         [data error] (local/get-data db user endpoint)]
-    (is (and error (not data)))
-    (is (= 404 (:status error)))))
+    (is (and data (not error)))
+    (is (and (vector? data) (empty? data)))))
 
 (deftest get-data-no-endpoints
   (let [db (atom storage-no-endpoints)
@@ -38,8 +38,8 @@
         endpoint (first endpoint-names)
         expected nil
         [data error] (local/get-data db user endpoint)]
-    (is (and error (not data)))
-    (is (= 404 (:status error)))))
+    (is (and data (not error)))
+    (is (and (vector? data) (empty? data)))))
 
 (deftest get-data-no-user
   (let [db (atom storage-no-endpoints)
@@ -47,8 +47,8 @@
         endpoint (first endpoint-names)
         expected nil
         [data error] (local/get-data db user endpoint)]
-    (is (and error (not data)))
-    (is (= 404 (:status error)))))
+    (is (and data (not error)))
+    (is (and (vector? data) (empty? data)))))
 
 (deftest get-data-id-success-single-entry
   (let [db (atom storage-single-entry)
@@ -120,24 +120,21 @@
         user (first ids)
         endpoint (first endpoint-names)
         [data error] (local/get-data-last db user endpoint)]
-    (is (and error (not data)))
-    (is (= 404 (:status error)))))
+    (is (and (not data) (not error)))))
 
 (deftest get-data-last-no-endpoint
   (let [db (atom storage-no-endpoints)
         user (first ids)
         endpoint (first endpoint-names)
         [data error] (local/get-data-last db user endpoint)]
-    (is (and error (not data)))
-    (is (= 404 (:status error)))))
+    (is (and (not data) (not error)))))
 
 (deftest get-data-last-empty
   (let [db (atom storage-empty)
         user (first ids)
         endpoint (first endpoint-names)
         [data error] (local/get-data-last db user endpoint)]
-    (is (and error (not data)))
-    (is (= 404 (:status error)))))
+    (is (and (not data) (not error)))))
 
 (deftest add-endpoint-success
   (let [db (atom storage-no-endpoints)
