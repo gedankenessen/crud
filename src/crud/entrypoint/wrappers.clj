@@ -13,16 +13,6 @@
             [cheshire.generate :refer [add-encoder encode-str remove-encoder]])
   (:import com.mongodb.MongoException org.bson.types.ObjectId))
 
-;; TODO: Move to db implementation!
-(defn wrap-database [handler]
-  (fn [req]
-    (try
-      (handler req)
-      (catch IllegalArgumentException e
-        (status {:body "Malformed token"} 403))
-      (catch MongoException _
-        (status {:body "Something went wrong"} 500)))))
-
 (defn wrap-authorization [handler config]
   (fn [req]
     (let [[{token :userId} error] (unsign-token (-> req :headers :authorization) config)]
@@ -58,7 +48,6 @@
 
 (def wrappers
   #(-> %
-       wrap-database
        wrap-is-content-type
        wrap-keywords
        wrap-json-body
