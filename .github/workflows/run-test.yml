@@ -1,0 +1,38 @@
+name: Run Clojure tests
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  clojure:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    runs-on: ${{matrix.os}}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Prepare java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '8'
+
+    - name: Install lein
+      uses: DeLaGuardo/setup-clojure@10.1
+      with:
+        lein: 2.9.10
+
+    - name: Lein version
+      run: lein -v
+
+    - name: Run tests
+      run: lein test
+
+
+
+
+
