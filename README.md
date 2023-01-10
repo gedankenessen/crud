@@ -10,7 +10,7 @@ Prototype faster by having crud create your basic CRUD backend. All you need to 
 
 # Usage
 
-`POST` your JSON to the `endpoint` of your:
+`POST` your JSON to the `endpoint` of your choice:
 
 ```
 POST 127.0.0.1/build/users
@@ -21,7 +21,7 @@ POST 127.0.0.1/build/users
 }
 ```
 
-And have crud automatically generate all CRUD operations on that `endpoint`:
+crud will automatically generate all CRUD operations on that `endpoint`:
 
 ```
 /users/{id}
@@ -70,7 +70,7 @@ Checkout [crud.gedankenessen.de](https://crud.gedankenessen.de) for more informa
 - JDK 8 (or above)
 - Clojure 1.10
 
-If you want your data [to be persistent](https://crud.gedankenessen.de/wiki/installation#about):
+If you want your data [to be persisted](https://crud.gedankenessen.de/wiki/installation#about):
 - MongoDB v6.0
 
 ## Installation
@@ -87,11 +87,9 @@ The necessary deps will be downloaded once you jack-in with your REPL. But you c
 lein deps
 ```
 
-As of right now crud expects a MongoDB running on the default port. You can change the behavior in `crud.persistence.mongo`.
-
 ## Usage
 
-1. Open your favorite editor and navigate to the `crud.core` namespace.
+1. Open your favorite code editor and navigate to the `crud.core` namespace.
 2. Once there, start your REPL
 3. Either call the `-main` function or evaluate the `start-server` call
 
